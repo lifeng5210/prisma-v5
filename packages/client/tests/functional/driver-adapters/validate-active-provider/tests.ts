@@ -97,7 +97,7 @@ testMatrix.setupTestSuite(
     skipDb: true,
     skipDefaultClientInstance: true,
     optOut: {
-      from: ['cockroachdb', 'mongodb', 'sqlserver'],
+      from: ['cockroachdb', 'mongodb', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: `We don't have Driver Adapters for these databases yet.`,
     },
   },

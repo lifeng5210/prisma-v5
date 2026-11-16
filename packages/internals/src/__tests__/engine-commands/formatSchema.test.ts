@@ -3,7 +3,7 @@ import path from 'path'
 import stripAnsi from 'strip-ansi'
 
 import { getSchemaWithPath } from '../../cli/getSchema'
-import { formatSchema } from '../../engine-commands'
+import { formatSchema, validate } from '../../engine-commands'
 import { extractSchemaContent, type MultipleSchemas } from '../../utils/schemaFileInput'
 import { fixturesPath } from '../__utils__/fixtures'
 
@@ -283,5 +283,31 @@ describe('format', () => {
     expect(ctx.mocked['console.log'].mock.calls.join('\n')).toMatchInlineSnapshot(`""`)
     expect(ctx.mocked['console.warn'].mock.calls.join('\n')).toMatchInlineSnapshot(`""`)
     expect(ctx.mocked['console.error'].mock.calls.join('\n')).toMatchInlineSnapshot(`""`)
+  })
+})
+
+describe.each(['kingbase-mysql', 'kingbase-oracle'] as const)('%s formatting', (provider) => {
+  test('preserves KES native types and produces valid schema', async () => {
+    const schemas: MultipleSchemas = [
+      [
+        'schema.prisma',
+        `datasource db {
+provider="${provider}"
+url="${provider}://localhost/app"
+}
+model Item {
+id Int @id
+amount Decimal @db.Decimal(10,2)
+}`,
+      ],
+    ]
+    const formatted = await formatSchema({ schemas })
+
+    expect(formatted).toHaveLength(1)
+    expect(formatted[0][0]).toBe('schema.prisma')
+    expect(formatted[0][1]).toContain(`provider = "${provider}"`)
+    expect(formatted[0][1]).toContain('@db.Decimal(10, 2)')
+    expect(() => validate({ schemas: formatted })).not.toThrow()
+    expect(await formatSchema({ schemas: formatted })).toEqual(formatted)
   })
 })

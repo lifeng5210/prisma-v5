@@ -13,6 +13,7 @@ import { DbExecute } from '../../../../migrate/src/commands/DbExecute'
 import { DbPush } from '../../../../migrate/src/commands/DbPush'
 import type { NamedTestSuiteConfig } from './getTestSuiteInfo'
 import { getTestSuiteFolderPath, getTestSuiteSchemaPath, testSuiteHasTypedSql } from './getTestSuiteInfo'
+import { dropKingbaseSchemas, isKingbaseProvider, resetKingbaseSchemas } from './kingbase'
 import { AdapterProviders, Providers } from './providers'
 import type { TestSuiteMeta } from './setupTestSuiteMatrix'
 import { AlterStatementCallback, ClientMeta } from './types'
@@ -142,6 +143,10 @@ export async function setupTestSuiteDatabase({
     if (suiteConfig.matrixOptions.driverAdapter === AdapterProviders.JS_D1) {
       await setupTestSuiteDatabaseD1({ schemaPath, cfWorkerBindings: cfWorkerBindings!, alterStatementCallback })
     } else {
+      if (isKingbaseProvider(suiteConfig.matrixOptions.provider)) {
+        const url = process.env[`DATABASE_URI_${suiteConfig.matrixOptions.provider}`]!
+        await resetKingbaseSchemas(url, schemaPath)
+      }
       const dbPushParams = ['--schema', schemaPath, '--skip-generate']
 
       // we reuse and clean the db when it is explicitly required
@@ -279,7 +284,12 @@ export async function dropTestSuiteDatabase({
 
   try {
     const consoleInfoMock = jest.spyOn(console, 'info').mockImplementation()
-    await DbDrop.new().parse(['--schema', schemaPath, '--force', '--preview-feature'])
+    if (isKingbaseProvider(suiteConfig.matrixOptions.provider)) {
+      const url = process.env[`DATABASE_URI_${suiteConfig.matrixOptions.provider}`]!
+      await dropKingbaseSchemas(url, schemaPath)
+    } else {
+      await DbDrop.new().parse(['--schema', schemaPath, '--force', '--preview-feature'])
+    }
     consoleInfoMock.mockRestore()
   } catch (e) {
     errors.push(e as Error)
@@ -403,6 +413,10 @@ function getDbUrl(provider: Providers): string {
       return requireEnvVariable('TEST_FUNCTIONAL_POSTGRES_URI')
     case Providers.MYSQL:
       return requireEnvVariable('TEST_FUNCTIONAL_MYSQL_URI')
+    case Providers.KINGBASE_MYSQL:
+      return requireEnvVariable('TEST_FUNCTIONAL_KINGBASE_MYSQL_URI')
+    case Providers.KINGBASE_ORACLE:
+      return requireEnvVariable('TEST_FUNCTIONAL_KINGBASE_ORACLE_URI')
     case Providers.COCKROACHDB:
       return requireEnvVariable('TEST_FUNCTIONAL_COCKROACH_URI')
     case Providers.SQLSERVER:

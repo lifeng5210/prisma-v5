@@ -13,7 +13,9 @@
     "directory": "packages/fetch-engine"
   },
   "bugs": "https://github.com/prisma/prisma/issues",
-  "enginesOverride": {},
+  "enginesOverride": {
+    "folder": "../../../prisma-engines-v5/target/debug"
+  },
   "devDependencies": {
     "@swc/core": "1.6.13",
     "@swc/jest": "0.2.36",
@@ -43,7 +45,7 @@
   },
   "dependencies": {
     "@prisma/debug": "workspace:*",
-    "@prisma/engines-version": "5.22.0-44.605197351a3c8bdd595af2d2a9bc3025bca48ea2",
+    "@prisma/engines-version": "workspace:*",
     "@prisma/get-platform": "workspace:*"
   },
   "scripts": {

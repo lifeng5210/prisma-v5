@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`0-legacy-ports.batch-find-unique (provider=kingbase-mysql) findUnique batching 1`] = `"SELECT \`\`.\`User\`.\`id\`, \`\`.\`User\`.\`email\`, \`\`.\`User\`.\`age\`, \`\`.\`User\`.\`name\` FROM \`\`.\`User\` WHERE \`\`.\`User\`.\`email\` IN (?,?,?,?)"`;
+
+exports[`0-legacy-ports.batch-find-unique (provider=kingbase-oracle) findUnique batching 1`] = `"SELECT ""."User"."id", ""."User"."email", ""."User"."age", ""."User"."name" FROM ""."User" WHERE ""."User"."email" IN ($1,$2,$3,$4) OFFSET $5 ROWS"`;

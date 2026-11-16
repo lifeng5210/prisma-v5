@@ -53,7 +53,15 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: [Providers.SQLSERVER, Providers.MYSQL, Providers.POSTGRESQL, Providers.COCKROACHDB, Providers.MONGODB],
+      from: [
+        Providers.SQLSERVER,
+        Providers.MYSQL,
+        Providers.POSTGRESQL,
+        Providers.COCKROACHDB,
+        Providers.MONGODB,
+        'kingbase-mysql',
+        'kingbase-oracle',
+      ],
       reason: 'Only testing SQLite, as this is just for testing the deprecated property',
     },
   },

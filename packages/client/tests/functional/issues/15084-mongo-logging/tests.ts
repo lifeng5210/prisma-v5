@@ -52,7 +52,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['cockroachdb', 'mysql', 'postgresql', 'sqlite', 'sqlserver'],
+      from: ['cockroachdb', 'mysql', 'postgresql', 'sqlite', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'Only testing MongoDB provider(s) to replicate this issue',
     },
     skipDefaultClientInstance: true,

@@ -30,7 +30,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['sqlite', 'postgresql', 'mongodb', 'cockroachdb', 'sqlserver'],
+      from: ['sqlite', 'postgresql', 'mongodb', 'cockroachdb', 'sqlserver', 'kingbase-oracle'],
       reason: 'This issue only happens on MySQL',
     },
   },

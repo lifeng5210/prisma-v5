@@ -48,7 +48,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['mongodb', 'mysql', 'sqlite', 'sqlserver'],
+      from: ['mongodb', 'mysql', 'sqlite', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: `
         $queryRaw only works on SQL based providers
         mysql: error: Field "string_list" (String[]) in model "TestModel" can't be a list. The current connector does not support lists of primitive types. 

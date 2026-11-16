@@ -400,3 +400,23 @@ describe('validate', () => {
     })
   })
 })
+
+describe.each(['kingbase-mysql', 'kingbase-oracle'] as const)('%s validation', (provider) => {
+  test.each(['Decimal', 'String'])('validates the %s field against the native Decimal type', async (scalar) => {
+    ctx.fs.write(
+      'schema.prisma',
+      `datasource db {
+  provider = "${provider}"
+  url = "${provider}://user:password@localhost:54321/app"
+}
+model CliRecord {
+  id Int @id
+  amount ${scalar} @db.Decimal(20, 2)
+}
+`,
+    )
+    const result = Validate.new().parse(['--schema', ctx.fs.path('schema.prisma')])
+    if (scalar === 'Decimal') await expect(result).resolves.toContain('is valid')
+    else await expect(result).rejects.toThrow(/not compatible with declared field type/)
+  })
+})

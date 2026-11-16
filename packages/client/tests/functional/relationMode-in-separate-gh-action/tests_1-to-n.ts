@@ -135,6 +135,10 @@ testMatrix.setupTestSuite(
                 : conditionalError.snapshot({
                     foreignKeys: {
                       [Providers.POSTGRESQL]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
+                        'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
                       [Providers.COCKROACHDB]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `authorId`',
                       [Providers.SQLSERVER]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
@@ -348,6 +352,8 @@ testMatrix.setupTestSuite(
                 : conditionalError.snapshot({
                     foreignKeys: {
                       [Providers.POSTGRESQL]: 'Unique constraint failed on the fields: (`id`)',
+                      [Providers.KINGBASE_MYSQL]: 'Unique constraint failed on the constraint: `UserOneToMany_pkey`',
+                      [Providers.KINGBASE_ORACLE]: 'Unique constraint failed on the constraint: `UserOneToMany_pkey`',
                       [Providers.COCKROACHDB]: 'Unique constraint failed on the fields: (`id`)',
                       [Providers.MYSQL]: ['DEFAULT', 'Cascade', 'SetNull'].includes(onUpdate)
                         ? // DEFAULT / Cascade / SetNull
@@ -363,6 +369,10 @@ testMatrix.setupTestSuite(
                       : // Other
                         {
                           [Providers.POSTGRESQL]: 'Unique constraint failed on the fields: (`id`)',
+                          [Providers.KINGBASE_MYSQL]:
+                            'Unique constraint failed on the constraint: `UserOneToMany_pkey`',
+                          [Providers.KINGBASE_ORACLE]:
+                            'Unique constraint failed on the constraint: `UserOneToMany_pkey`',
                           [Providers.COCKROACHDB]: 'Unique constraint failed on the fields: (`id`)',
                           [Providers.MYSQL]: 'Unique constraint failed on the constraint: `PRIMARY`',
                           [Providers.SQLSERVER]: 'Unique constraint failed on the constraint: `dbo.UserOneToMany`',
@@ -530,6 +540,10 @@ testMatrix.setupTestSuite(
                       [Providers.MONGODB]:
                         "The change you are trying to make would violate the required relation 'PostOneToManyToUserOneToMany' between the `PostOneToMany` and `UserOneToMany` models.",
                       [Providers.POSTGRESQL]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
+                        'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
                       [Providers.COCKROACHDB]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `authorId`',
                       [Providers.SQLSERVER]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
@@ -621,6 +635,8 @@ testMatrix.setupTestSuite(
             : conditionalError.snapshot({
                 foreignKeys: {
                   [Providers.POSTGRESQL]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
+                  [Providers.KINGBASE_MYSQL]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
+                  [Providers.KINGBASE_ORACLE]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
                   [Providers.COCKROACHDB]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',
                   [Providers.MYSQL]: 'Foreign key constraint violated: `authorId`',
                   [Providers.SQLSERVER]: 'Foreign key constraint violated: `PostOneToMany_authorId_fkey (index)`',

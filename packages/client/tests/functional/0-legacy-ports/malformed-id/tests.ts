@@ -66,7 +66,15 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: [Providers.SQLSERVER, Providers.MYSQL, Providers.POSTGRESQL, Providers.COCKROACHDB, Providers.SQLITE],
+      from: [
+        Providers.SQLSERVER,
+        Providers.MYSQL,
+        Providers.POSTGRESQL,
+        Providers.COCKROACHDB,
+        Providers.SQLITE,
+        'kingbase-mysql',
+        'kingbase-oracle',
+      ],
       reason: 'Currently, only MongoDB strictly validates the id fields.',
     },
   },

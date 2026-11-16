@@ -45,7 +45,7 @@ testMatrix.setupTestSuite(
         {
           id: expect.anything(),
           string: 'str',
-          int: 42,
+          int: provider === Providers.KINGBASE_ORACLE ? new Prisma.Decimal('42') : 42,
           // TODO: replace with exact value and remove next assert after
           // Jest is updated to at least 30.0.0-alpha.6 (which ships https://github.com/jestjs/jest/pull/15191).
           bInt: expect.anything(),
@@ -92,6 +92,8 @@ testMatrix.setupTestSuite(
       if (driverAdapter === 'js_d1') {
         // It's a number
         expect(result![0].bInt === 12345).toBe(true)
+      } else if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result![0].bInt).toEqual(new Prisma.Decimal('12345'))
       } else {
         // It's a bigint
         expect(result![0].bInt === BigInt('12345')).toBe(true)
@@ -111,6 +113,8 @@ testMatrix.setupTestSuite(
         // It's a number
         expect(result![0].bInt === BigInt('2147483647')).toBe(false)
         expect(result![0].bInt === 2147483647).toBe(true)
+      } else if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result![0].bInt).toEqual(new Prisma.Decimal('2147483647'))
       } else {
         // It's a bigint
         expect(result![0].bInt === BigInt('2147483647')).toBe(true)
@@ -129,6 +133,8 @@ testMatrix.setupTestSuite(
       if (driverAdapter === 'js_d1') {
         // It's a number
         expect(result![0].bInt === -2147483647).toBe(true)
+      } else if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result![0].bInt).toEqual(new Prisma.Decimal('-2147483647'))
       } else {
         // It's a bigint
         expect(result![0].bInt === BigInt('-2147483647')).toBe(true)
@@ -146,6 +152,8 @@ testMatrix.setupTestSuite(
 
       if (driverAdapter === 'js_d1') {
         expect(result![0].bInt === 9007199254740991).toBe(true)
+      } else if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result![0].bInt).toEqual(new Prisma.Decimal('9007199254740991'))
       } else {
         expect(result![0].bInt === BigInt('9007199254740991')).toBe(true)
       }
@@ -163,6 +171,8 @@ testMatrix.setupTestSuite(
       if (driverAdapter === 'js_d1') {
         // It's a number
         expect(result![0].bInt === -9007199254740991).toBe(true)
+      } else if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result![0].bInt).toEqual(new Prisma.Decimal('-9007199254740991'))
       } else {
         // It's a bigint
         expect(result![0].bInt === BigInt('-9007199254740991')).toBe(true)
@@ -188,6 +198,10 @@ testMatrix.setupTestSuite(
           await createBigIntMaxSafeIntPlusMaxSafeInt(prisma)
           const result = await getAllEntries()
 
+          if (provider === Providers.KINGBASE_ORACLE) {
+            expect(result![0].bInt).toEqual(new Prisma.Decimal('18014398509481982'))
+            return
+          }
           // It's a bigint
           expect(result![0].bInt === BigInt('9007199254740991') + BigInt('9007199254740991')).toBe(true)
           expect(result![0].bInt === 18014398509481982n).toBe(true)

@@ -4,6 +4,8 @@ import { Providers } from '../../_utils/providers'
 const maxPrecisionByProvider = {
   sqlserver: 38,
   mysql: 65,
+  'kingbase-mysql': 65,
+  'kingbase-oracle': 38,
 }
 
 export default defineMatrix(
@@ -13,7 +15,13 @@ export default defineMatrix(
         provider: Providers.POSTGRESQL,
       },
       {
+        provider: Providers.KINGBASE_ORACLE,
+      },
+      {
         provider: Providers.MYSQL,
+      },
+      {
+        provider: Providers.KINGBASE_MYSQL,
       },
       {
         provider: Providers.COCKROACHDB,

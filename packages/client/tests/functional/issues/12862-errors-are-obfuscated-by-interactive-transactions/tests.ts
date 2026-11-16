@@ -2,13 +2,20 @@ import { faker } from '@faker-js/faker'
 // @ts-ignore
 import type { PrismaClient } from '@prisma/client'
 
+import { Providers } from '../../_utils/providers'
 import testMatrix from './_matrix'
 
 declare let prisma: PrismaClient
 
 // https://github.com/prisma/prisma/issues/12862
 testMatrix.setupTestSuite(
-  () => {
+  ({ provider }) => {
+    const checkConstraintError =
+      provider === Providers.KINGBASE_MYSQL
+        ? /(?:violates check constraint|违反了检查约束) (\\*)"Post_viewCount_check(\\*)"/
+        : provider === Providers.KINGBASE_ORACLE
+        ? /(?:violates check constraint|违反了检查约束) (\\*)"post_viewcount_check(\\*)"/
+        : /violates check constraint (\\*)"post_viewcount_check(\\*)"/
     /*
     Note:
     - Postgres (Rust driver) fails with a ConnectorError:
@@ -43,7 +50,7 @@ testMatrix.setupTestSuite(
             viewCount: -1, // should fail, must be >= 0
           },
         }),
-      ).rejects.toThrow(/violates check constraint (\\*)"post_viewcount_check(\\*)"/)
+      ).rejects.toThrow(checkConstraintError)
     })
 
     test('should propagate the correct error when a method fails inside an transaction', async () => {
@@ -64,7 +71,7 @@ testMatrix.setupTestSuite(
             },
           }),
         ]),
-      ).rejects.toThrow(/violates check constraint (\\*)"post_viewcount_check(\\*)"/)
+      ).rejects.toThrow(checkConstraintError)
     })
 
     test('should propagate the correct error when a method fails inside an interactive transaction', async () => {
@@ -87,7 +94,7 @@ testMatrix.setupTestSuite(
 
           return post
         }),
-      ).rejects.toThrow(/violates check constraint (\\*)"post_viewcount_check(\\*)"/)
+      ).rejects.toThrow(checkConstraintError)
     })
   },
   {

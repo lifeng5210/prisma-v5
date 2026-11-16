@@ -26,6 +26,24 @@ export default defineMatrix(() => [
         onDelete,
       },
     },
+    {
+      provider: Providers.KINGBASE_ORACLE,
+      id: 'String @id',
+      relationMode,
+      referentialActions: {
+        onUpdate,
+        onDelete,
+      },
+    },
+    {
+      provider: Providers.KINGBASE_MYSQL,
+      id: 'String @id',
+      relationMode,
+      referentialActions: {
+        onUpdate,
+        onDelete,
+      },
+    },
 
     /*
     {

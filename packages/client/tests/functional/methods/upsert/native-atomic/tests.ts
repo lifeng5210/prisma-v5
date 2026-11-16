@@ -433,7 +433,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['mongodb', 'mysql', 'sqlserver'],
+      from: ['mongodb', 'mysql', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'Other providers do not support native INSERT ... ON CONFLICT SET .. WHERE',
     },
     skipDefaultClientInstance: true,

@@ -31,7 +31,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['cockroachdb', 'mysql', 'mongodb', 'sqlite', 'sqlserver'],
+      from: ['cockroachdb', 'mysql', 'mongodb', 'sqlite', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'Uses PostgreSQL extensions',
     },
   },

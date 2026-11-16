@@ -39,7 +39,15 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: [Providers.SQLSERVER, Providers.MYSQL, Providers.POSTGRESQL, Providers.COCKROACHDB, Providers.SQLITE],
+      from: [
+        Providers.SQLSERVER,
+        Providers.MYSQL,
+        Providers.POSTGRESQL,
+        Providers.COCKROACHDB,
+        Providers.SQLITE,
+        'kingbase-mysql',
+        'kingbase-oracle',
+      ],
       reason: 'Composites are only supported on mongo',
     },
   },

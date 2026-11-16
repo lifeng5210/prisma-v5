@@ -457,3 +457,24 @@ describe('validate', () => {
     })
   })
 })
+
+describe.each(['kingbase-mysql', 'kingbase-oracle'] as const)('%s validation', (provider) => {
+  const schema = (field: string) => `datasource db {
+    provider = "${provider}"
+    url = "${provider}://localhost/app"
+  }
+  model Item {
+    id Int @id
+    ${field}
+  }`
+
+  test('accepts supported native types', () => {
+    expect(() => validate({ schemas: [['schema.prisma', schema('amount Decimal @db.Decimal(10,2)')]] })).not.toThrow()
+  })
+
+  test('rejects native types on incompatible scalar fields', () => {
+    expect(() => validate({ schemas: [['schema.prisma', schema('amount String @db.Decimal(10,2)')]] })).toThrow(
+      'not compatible with declared field type String',
+    )
+  })
+})

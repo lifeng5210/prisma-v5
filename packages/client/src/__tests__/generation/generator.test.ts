@@ -1,10 +1,19 @@
-import { ClientEngineType, getClientEngineType, getGenerator, getPackedPackage, parseEnvValue } from '@prisma/internals'
+import {
+  ClientEngineType,
+  getClientEngineType,
+  getConfig,
+  getDMMF,
+  getGenerator,
+  getPackedPackage,
+  parseEnvValue,
+} from '@prisma/internals'
 import fs from 'fs'
 import path from 'path'
 import rimraf from 'rimraf'
 import stripAnsi from 'strip-ansi'
 import { promisify } from 'util'
 
+import { buildClient } from '../../generation/generateClient'
 import { omit } from '../../omit'
 
 const del = promisify(rimraf)
@@ -289,5 +298,44 @@ describe('generator', () => {
     expect(fs.existsSync(path.join(photonDir, 'index.d.ts'))).toBe(true)
     expect(fs.existsSync(path.join(photonDir, 'runtime'))).toBe(true)
     generator.stop()
+  })
+})
+
+describe.each(['kingbase-mysql', 'kingbase-oracle'] as const)('%s native client generation', (provider) => {
+  test.each(['library', 'binary'])('preserves the provider and selects the %s runtime', async (engineType) => {
+    const datamodel = `datasource db {
+      provider = "${provider}"
+      url = "${provider}://localhost/app"
+    }
+    generator client {
+      provider = "prisma-client-js"
+      engineType = "${engineType}"
+    }
+    model Item {
+      id Int @id @default(autoincrement())
+      amount Decimal @db.Decimal(10,2)
+      content Bytes?
+    }`
+    const config = await getConfig({ datamodel, ignoreEnvVarErrors: false })
+    const dmmf = await getDMMF({ datamodel })
+    const { fileMap } = await buildClient({
+      datamodel,
+      schemaPath: path.join(__dirname, 'schema.prisma'),
+      runtimeBase: '@prisma/client/runtime',
+      outputDir: path.join(__dirname, 'generated'),
+      generator: config.generators[0],
+      datasources: config.datasources,
+      binaryPaths: {},
+      dmmf,
+      engineVersion: 'test-engine-version',
+      clientVersion: '0.0.0',
+      activeProvider: config.datasources[0].activeProvider,
+    })
+
+    expect(fileMap['index.js']).toContain(`"activeProvider": "${provider}"`)
+    expect(fileMap['index.js']).toContain(`"engineType": "${engineType}"`)
+    expect(fileMap['index.js']).toContain(`@prisma/client/runtime/${engineType}`)
+    expect(fileMap['index.d.ts']).toContain('export class PrismaClient')
+    expect(fileMap['index.d.ts']).toContain('export type Item =')
   })
 })

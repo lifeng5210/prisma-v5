@@ -1,3 +1,4 @@
+import { Providers } from '../_utils/providers'
 import { waitFor } from '../_utils/tests/waitFor'
 import { NewPrismaClient } from '../_utils/types'
 import testMatrix from './_matrix'
@@ -8,7 +9,7 @@ declare let newPrismaClient: NewPrismaClient<typeof PrismaClient>
 declare let Prisma: typeof PrismaNamespace
 
 testMatrix.setupTestSuite(
-  (_suiteConfig, _suiteMeta, _clientMeta) => {
+  ({ provider }, _suiteMeta, _clientMeta) => {
     const queries: string[] = []
     let prisma: PrismaClient<PrismaNamespace.PrismaClientOptions, 'query'>
 
@@ -36,6 +37,15 @@ testMatrix.setupTestSuite(
       { level, expectSql }: { level: () => PrismaNamespace.TransactionIsolationLevel; expectSql: string },
     ) => {
       test(name, async () => {
+        if (provider === Providers.KINGBASE_ORACLE && ['ReadUncommitted', 'RepeatableRead'].includes(name)) {
+          await expect(async () => {
+            await prisma.$transaction([prisma.user.findFirst({}), prisma.user.findFirst({})], {
+              isolationLevel: level(),
+            })
+          }).rejects.toThrow('Invalid enum value')
+          expect(queries).toEqual([])
+          return
+        }
         await prisma.$transaction([prisma.user.findFirst({}), prisma.user.findFirst({})], {
           isolationLevel: level(),
         })
@@ -47,6 +57,7 @@ testMatrix.setupTestSuite(
     }
 
     testIsolationLevel('ReadUncommitted', {
+      // @ts-test-if: provider !== Providers.KINGBASE_ORACLE
       level: () => Prisma.TransactionIsolationLevel.ReadUncommitted,
       expectSql: 'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED',
     })
@@ -57,6 +68,7 @@ testMatrix.setupTestSuite(
     })
 
     testIsolationLevel('RepeatableRead', {
+      // @ts-test-if: provider !== Providers.KINGBASE_ORACLE
       level: () => Prisma.TransactionIsolationLevel.RepeatableRead,
       expectSql: 'SET TRANSACTION ISOLATION LEVEL REPEATABLE READ',
     })

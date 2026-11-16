@@ -38,7 +38,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['cockroachdb', 'mongodb', 'mysql', 'sqlserver', 'sqlite'],
+      from: ['cockroachdb', 'mongodb', 'mysql', 'sqlserver', 'sqlite', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'warnOnce can only be tested one time per process',
     },
     skipDefaultClientInstance: true,

@@ -4,6 +4,8 @@ import fs from 'fs-jetpack'
 import path from 'path'
 
 import { Migrate } from '../Migrate'
+import { SchemaEngine } from '../SchemaEngine'
+import { introspectSql } from '../utils/introspectSql'
 
 const ctx = jestContext.new().add(jestConsoleContext()).assemble()
 
@@ -621,4 +623,120 @@ describe('schemaPush', () => {
 
 function replaceInSchemas(schemas: MultipleSchemas, search: string, replace: string): MultipleSchemas {
   return schemas.map(([path, content]) => [path, content.replace(search, replace)])
+}
+
+for (const [provider, envName] of [
+  ['kingbase-mysql', 'TEST_KINGBASE_MYSQL_URI'],
+  ['kingbase-oracle', 'TEST_KINGBASE_ORACLE_URI'],
+] as const) {
+  const describeIf = process.env[envName] ? describe : describe.skip
+
+  describeIf(`${provider} migration RPC`, () => {
+    it('migrates, introspects SQL and pushes changes in isolated schemas', async () => {
+      ctx.fixture('empty')
+      const schemaPath = ctx.fs.path('schema.prisma')
+      const name = `v5_migrate_${process.pid}_${Date.now()}`
+      const schemaNames = [name, `${name}_shadow`]
+      const originalUrl = process.env.TEST_KINGBASE_MIGRATE_URI
+      const originalShadowUrl = process.env.TEST_KINGBASE_MIGRATE_SHADOW_URI
+      const url = new URL(process.env[envName]!)
+      const bootstrap = new SchemaEngine({})
+      const migrate = new Migrate(schemaPath)
+      const execute = (script: string) =>
+        bootstrap.dbExecute({ datasourceType: { tag: 'url', url: url.toString() }, script })
+
+      try {
+        for (const schema of schemaNames) {
+          await execute(`CREATE SCHEMA "${schema}"`)
+        }
+        const scopedUrl = new URL(url)
+        scopedUrl.searchParams.set('schema', name)
+        process.env.TEST_KINGBASE_MIGRATE_URI = scopedUrl.toString()
+        scopedUrl.searchParams.set('schema', `${name}_shadow`)
+        process.env.TEST_KINGBASE_MIGRATE_SHADOW_URI = scopedUrl.toString()
+
+        const datamodel = `datasource db {
+  provider = "${provider}"
+  url = env("TEST_KINGBASE_MIGRATE_URI")
+  shadowDatabaseUrl = env("TEST_KINGBASE_MIGRATE_SHADOW_URI")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["typedSql"]
+}
+
+model MigrateRecord {
+  id Int @id
+  label String @unique @db.${provider === 'kingbase-mysql' ? 'VarChar' : 'VarChar2'}(64)
+  amount Decimal @db.Decimal(20, 2)
+}
+`
+        ctx.fs.write('schema.prisma', datamodel)
+        const migration = await migrate.createMigration({
+          migrationsDirectoryPath: migrate.migrationsDirectoryPath!,
+          schema: toSchemasContainer(await getSchema(schemaPath)),
+          migrationName: 'init',
+          draft: false,
+        })
+        expect(migration.generatedMigrationName).toMatch(/_init$/)
+        expect(ctx.fs.read(`migrations/${migration.generatedMigrationName}/migration.sql`)).toContain('MigrateRecord')
+        expect(await migrate.applyMigrations()).toEqual({ appliedMigrationNames: [migration.generatedMigrationName] })
+        expect(await migrate.applyMigrations()).toEqual({ appliedMigrationNames: [] })
+        expect(await migrate.diagnoseMigrationHistory({ optInToShadowDatabase: false })).toMatchObject({
+          history: null,
+          failedMigrationNames: [],
+          editedMigrationNames: [],
+        })
+
+        const table = provider === 'kingbase-mysql' ? '`MigrateRecord`' : '"MigrateRecord"'
+        const placeholder = provider === 'kingbase-mysql' ? '?' : '$1'
+        const query = `SELECT id FROM ${table} WHERE id = ${placeholder}`
+        const typedSql = await introspectSql(schemaPath, [
+          { name: 'findRecord', source: query, fileName: 'findRecord.sql' },
+        ])
+        expect(typedSql).toMatchObject({
+          ok: true,
+          queries: [{ name: 'findRecord', parameters: [expect.any(Object)], resultColumns: [{ name: 'id' }] }],
+        })
+        const invalidSql = await introspectSql(schemaPath, [
+          { name: 'invalid', source: 'SELECT missing_column FROM ' + table, fileName: 'invalid.sql' },
+        ])
+        expect(invalidSql).toMatchObject({
+          ok: false,
+          errors: [{ fileName: 'invalid.sql', message: expect.any(String) }],
+        })
+
+        ctx.fs.write('schema.prisma', datamodel.replace('  id Int @id', '  id Int @id\n  optionalValue Int?'))
+        const pushed = await migrate.push({})
+        expect(pushed.executedSteps).toBeGreaterThan(0)
+        expect(pushed).toMatchObject({ warnings: [], unexecutable: [] })
+        expect(await migrate.push({})).toMatchObject({ executedSteps: 0, warnings: [], unexecutable: [] })
+        const introspected = await migrate.engine.introspect({
+          schema: toSchemasContainer(await getSchema(schemaPath)),
+          baseDirectoryPath: ctx.fs.path(),
+          force: true,
+          compositeTypeDepth: -1,
+        })
+        const introspectedSchema = introspected.schema.files.map((file) => file.content).join('\n')
+        expect(introspectedSchema).toMatch(new RegExp(`provider\\s*=\\s*"${provider}"`))
+        expect(introspectedSchema).toContain('model MigrateRecord')
+        expect(introspectedSchema).toMatch(/optionalValue\s+Int\?/)
+        expect(introspectedSchema).toContain(provider === 'kingbase-mysql' ? '@db.Decimal(20, 2)' : '@db.Number(20, 2)')
+      } finally {
+        migrate.stop()
+        try {
+          for (const schema of schemaNames) {
+            await execute(`DROP SCHEMA IF EXISTS "${schema}" CASCADE`)
+          }
+        } finally {
+          bootstrap.stop()
+          if (originalUrl === undefined) delete process.env.TEST_KINGBASE_MIGRATE_URI
+          else process.env.TEST_KINGBASE_MIGRATE_URI = originalUrl
+          if (originalShadowUrl === undefined) delete process.env.TEST_KINGBASE_MIGRATE_SHADOW_URI
+          else process.env.TEST_KINGBASE_MIGRATE_SHADOW_URI = originalShadowUrl
+        }
+      }
+    }, 120_000)
+  })
 }

@@ -43,7 +43,7 @@ testMatrix.setupTestSuite(
     skipDb: true,
     skipDefaultClientInstance: true,
     optOut: {
-      from: ['cockroachdb', 'mysql', 'postgresql', 'sqlite', 'sqlserver'],
+      from: ['cockroachdb', 'mysql', 'postgresql', 'sqlite', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'Test for MongoDB-specific errors',
     },
     skipDataProxy: {

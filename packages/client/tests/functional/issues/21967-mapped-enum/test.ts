@@ -1,3 +1,4 @@
+import { Providers } from '../../_utils/providers'
 import testMatrix from './_matrix'
 // @ts-ignore
 import type { PrismaClient } from './node_modules/@prisma/client'
@@ -5,8 +6,12 @@ import type { PrismaClient } from './node_modules/@prisma/client'
 declare let prisma: PrismaClient
 
 testMatrix.setupTestSuite(
-  () => {
+  ({ provider }) => {
     beforeAll(async () => {
+      if (provider === Providers.KINGBASE_ORACLE) {
+        await prisma.$executeRaw`INSERT INTO "company" VALUES ('1','neplátce'),('2','plátce');`
+        return
+      }
       await prisma.$executeRaw`INSERT INTO \`company\` VALUES ('1','neplátce'),('2','plátce');`
     })
     test('correctly returns mapped enums', async () => {

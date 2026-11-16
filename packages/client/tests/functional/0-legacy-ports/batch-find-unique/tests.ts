@@ -107,6 +107,12 @@ testMatrix.setupTestSuite(({ provider }, _suiteMeta, _clientMeta, cliMeta) => {
         }
         break
 
+      case Providers.KINGBASE_MYSQL:
+      case Providers.KINGBASE_ORACLE: {
+        const schema = new URL(globalThis['datasourceInfo'].databaseUrl).searchParams.get('schema')!
+        expect(executedBatchQuery!.replaceAll(schema, '')).toMatchSnapshot()
+        break
+      }
       case Providers.SQLITE:
         expect(executedBatchQuery).toMatchInlineSnapshot(
           `"SELECT \`main\`.\`User\`.\`id\`, \`main\`.\`User\`.\`email\`, \`main\`.\`User\`.\`age\`, \`main\`.\`User\`.\`name\` FROM \`main\`.\`User\` WHERE \`main\`.\`User\`.\`email\` IN (?,?,?,?) LIMIT ? OFFSET ?"`,

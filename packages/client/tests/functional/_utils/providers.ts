@@ -5,6 +5,8 @@ export enum Providers {
   MONGODB = 'mongodb',
   COCKROACHDB = 'cockroachdb',
   SQLSERVER = 'sqlserver',
+  KINGBASE_MYSQL = 'kingbase-mysql',
+  KINGBASE_ORACLE = 'kingbase-oracle',
 }
 
 export enum AdapterProviders {
@@ -30,6 +32,8 @@ export const adaptersForProvider = {
   [Providers.MONGODB]: [],
   [Providers.COCKROACHDB]: [],
   [Providers.SQLSERVER]: [],
+  [Providers.KINGBASE_MYSQL]: [],
+  [Providers.KINGBASE_ORACLE]: [],
 } satisfies Record<Providers, AdapterProviders[]>
 
 export const relationModesForAdapter = {

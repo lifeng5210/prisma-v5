@@ -364,3 +364,27 @@ describe('format', () => {
     )
   })
 })
+
+describe.each(['kingbase-mysql', 'kingbase-oracle'] as const)('%s formatting', (provider) => {
+  test('formats and preserves the provider and native type', async () => {
+    ctx.fs.write(
+      'schema.prisma',
+      `datasource db {
+provider="${provider}"
+url="${provider}://user:password@localhost:54321/app"
+}
+model CliRecord {
+id Int @id
+amount Decimal @db.Decimal(20,2)
+}
+`,
+    )
+    const schemaPath = ctx.fs.path('schema.prisma')
+    await expect(Format.new().parse(['--schema', schemaPath])).resolves.toContain('Formatted')
+    const formatted = ctx.fs.read('schema.prisma')!
+    expect(formatted).toContain(`provider = "${provider}"`)
+    expect(formatted).toContain('@db.Decimal(20, 2)')
+    await expect(Format.new().parse(['--schema', schemaPath, '--check'])).resolves.toContain('formatted correctly')
+    expect(ctx.fs.read('schema.prisma')).toBe(formatted)
+  })
+})

@@ -42,7 +42,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['sqlite', 'mysql', 'mongodb', 'cockroachdb', 'sqlserver'],
+      from: ['sqlite', 'mysql', 'mongodb', 'cockroachdb', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'json lists are supported only on postgresql',
     },
   },

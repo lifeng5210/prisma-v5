@@ -216,3 +216,32 @@ describe('getConfig', () => {
     `)
   })
 })
+
+describe.each(['kingbase-mysql', 'kingbase-oracle'] as const)('%s configuration', (provider) => {
+  test.each(['library', 'binary'])('preserves the provider and %s engine configuration', async (engineType) => {
+    const url = `${provider}://user:password@localhost:54321/app?schema=tenant`
+    const config = await getConfig({
+      ignoreEnvVarErrors: false,
+      datamodel: `datasource db {
+        provider = "${provider}"
+        url = "${url}"
+      }
+      generator client {
+        provider = "prisma-client-js"
+        engineType = "${engineType}"
+      }
+      model Item {
+        id Int @id
+      }`,
+    })
+
+    expect(config.datasources).toHaveLength(1)
+    expect(config.datasources[0]).toMatchObject({
+      provider,
+      activeProvider: provider,
+      url: { value: url, fromEnvVar: null },
+    })
+    expect(config.generators[0].config.engineType).toBe(engineType)
+    expect(config.warnings).toEqual([])
+  })
+})

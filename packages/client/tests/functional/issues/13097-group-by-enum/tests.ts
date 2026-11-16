@@ -12,11 +12,15 @@ declare let prisma: PrismaClient
 testMatrix.setupTestSuite(
   ({ provider }) => {
     beforeAll(async () => {
-      if (provider !== Providers.MYSQL) {
+      if (
+        provider !== Providers.MYSQL &&
+        provider !== Providers.KINGBASE_MYSQL &&
+        provider !== Providers.KINGBASE_ORACLE
+      ) {
         await prisma.resource.create({
           data: {
             enumValue: 'A',
-            // @ts-test-if: provider !== Providers.MYSQL
+            // @ts-test-if: provider !== Providers.MYSQL && provider !== Providers.KINGBASE_MYSQL && provider !== Providers.KINGBASE_ORACLE
             enumArray: ['A'],
           },
         })
@@ -43,9 +47,11 @@ testMatrix.setupTestSuite(
       `)
     })
 
-    testIf(provider !== Providers.MYSQL)('groupBy on enumArray field', async () => {
+    testIf(
+      provider !== Providers.MYSQL && provider !== Providers.KINGBASE_MYSQL && provider !== Providers.KINGBASE_ORACLE,
+    )('groupBy on enumArray field', async () => {
       const result = await prisma.resource.groupBy({
-        // @ts-test-if: provider !== Providers.MYSQL
+        // @ts-test-if: provider !== Providers.MYSQL && provider !== Providers.KINGBASE_MYSQL && provider !== Providers.KINGBASE_ORACLE
         by: ['enumArray'],
       })
 

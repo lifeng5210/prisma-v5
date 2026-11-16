@@ -58,7 +58,8 @@ export const rawQueryArgsMapper =
       // If this was called as prisma.$executeRaw`<SQL>` try to generate a SQL prepared statement
       switch (activeProvider) {
         case 'sqlite':
-        case 'mysql': {
+        case 'mysql':
+        case 'kingbase-mysql': {
           queryString = args.sql
           parameters = {
             values: serializeRawParameters(args.values),
@@ -69,7 +70,8 @@ export const rawQueryArgsMapper =
 
         case 'cockroachdb':
         case 'postgresql':
-        case 'postgres': {
+        case 'postgres':
+        case 'kingbase-oracle': {
           queryString = args.text
 
           parameters = {

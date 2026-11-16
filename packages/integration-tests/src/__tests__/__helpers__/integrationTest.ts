@@ -37,10 +37,12 @@ type Scenario = {
    * SQL to put database into pre-test condition.
    */
   up: string
+  /** Preview features enabled for this scenario. */
+  previewFeatures?: PreviewFeature[]
   /**
    * Arbitrary Prisma client logic to test.
    */
-  do: (client: any) => Promise<any>
+  do: (client: any, ctx: Context) => Promise<any>
   /**
    * Value that the "do" operation should result in.
    */
@@ -90,7 +92,7 @@ type Database<Client> = {
   /**
    * At the end of _each_ test run logic
    */
-  afterEach?: (db: Client) => MaybePromise
+  afterEach?: (db: Client, ctx: Context) => MaybePromise
   /**
    * At the end of _all_ tests run logic to close the database connection.
    */
@@ -138,7 +140,7 @@ type Settings = {
 /**
  * A list of available preview features on Prisma Client.
  */
-type PreviewFeature = ''
+type PreviewFeature = '' | 'fullTextSearch'
 
 /**
  * Settings to add properties on Prisma Client.
@@ -181,8 +183,8 @@ export function introspectionIntegrationTest<Client>(input: Input<Client>) {
     beforeAllScenarios(kind, input)
   })
 
-  afterAll(() => {
-    afterAllScenarios(kind, states)
+  afterAll(async () => {
+    await afterAllScenarios(kind, states)
   })
 
   /**
@@ -222,8 +224,8 @@ export function runtimeIntegrationTest<Client>(input: Input<Client>) {
     beforeAllScenarios(kind, input)
   })
 
-  afterAll(() => {
-    afterAllScenarios(kind, states)
+  afterAll(async () => {
+    await afterAllScenarios(kind, states)
   })
 
   it.each(filterTestScenarios(input.scenarios))(
@@ -237,7 +239,7 @@ export function runtimeIntegrationTest<Client>(input: Input<Client>) {
       state.prisma = new PrismaClient()
       await state.prisma.$connect()
 
-      const result = await scenario.do(state.prisma)
+      const result = await scenario.do(state.prisma, ctx)
       expect(result).toEqual(scenario.expect)
 
       await teardownScenario(state)
@@ -246,8 +248,9 @@ export function runtimeIntegrationTest<Client>(input: Input<Client>) {
   )
 }
 
-function afterAllScenarios(kind: string, states: Record<string, ScenarioState>) {
-  Object.values(states).forEach(async (state) => {
+async function afterAllScenarios(kind: string, states: Record<string, ScenarioState>) {
+  for (const state of Object.values(states)) {
+    await state.prisma?.$disconnect()
     // props might be missing if test errors out before they are set.
     if (state.db && state.input.database.close) {
       await state.input.database.close(state.db)
@@ -255,7 +258,7 @@ function afterAllScenarios(kind: string, states: Record<string, ScenarioState>) 
     if (state.input.settings?.cleanupTempDirs !== false) {
       fs.remove(getScenariosDir(state.input.database.name, kind))
     }
-  })
+  }
 }
 
 function beforeAllScenarios(testKind: string, input: Input) {
@@ -280,46 +283,49 @@ async function setupScenario(kind: string, input: Input, scenario: Scenario) {
   await ctx.fs.dirAsync('.')
 
   state.db = await input.database.connect(ctx)
-  await input.database.beforeEach(state.db, scenario.up, ctx)
+  try {
+    await input.database.beforeEach(state.db, scenario.up, ctx)
 
-  const datasourceBlock =
-    'raw' in input.database.datasource
-      ? input.database.datasource.raw(ctx)
-      : makeDatasourceBlock(
-          input.database.datasource.provider ?? input.database.name,
-          typeof input.database.datasource.url === 'function'
-            ? input.database.datasource.url(ctx)
-            : input.database.datasource.url,
-        )
+    const datasourceBlock =
+      'raw' in input.database.datasource
+        ? input.database.datasource.raw(ctx)
+        : makeDatasourceBlock(
+            input.database.datasource.provider ?? input.database.name,
+            typeof input.database.datasource.url === 'function'
+              ? input.database.datasource.url(ctx)
+              : input.database.datasource.url,
+          )
 
-  const schemaBase = `
+    const schemaBase = `
     generator client {
       provider = "prisma-client-js"
       output   = "${ctx.fs.path()}"
-      ${renderPreviewFeatures(input.prismaClientSettings?.previewFeatures)}
+      ${renderPreviewFeatures(scenario.previewFeatures ?? input.prismaClientSettings?.previewFeatures)}
     }
 
     ${datasourceBlock}
   `
 
-  const engine = new SchemaEngine({
-    projectDir: process.cwd(),
-  })
-  const introspectionResult = await engine.introspect({
-    schema: {
-      files: [{ path: 'schema.prisma', content: schemaBase }],
-    },
-    baseDirectoryPath: process.cwd(),
-  })
+    const engine = new SchemaEngine({})
+    const introspectionResult = await engine.introspect({
+      schema: {
+        files: [{ path: 'schema.prisma', content: schemaBase }],
+      },
+      baseDirectoryPath: process.cwd(),
+    })
 
-  const prismaSchemaPath = ctx.fs.path('schema.prisma')
+    const prismaSchemaPath = ctx.fs.path('schema.prisma')
 
-  await fs.writeAsync(prismaSchemaPath, introspectionResult.schema.files[0].content)
-  return {
-    introspectionResult,
-    state,
-    ctx,
-    prismaSchemaPath,
+    await fs.writeAsync(prismaSchemaPath, introspectionResult.schema.files[0].content)
+    return {
+      introspectionResult,
+      state,
+      ctx,
+      prismaSchemaPath,
+    }
+  } catch (error) {
+    await input.database.close?.(state.db)
+    throw error
   }
 }
 
@@ -328,7 +334,7 @@ async function teardownScenario(state: ScenarioState) {
 
   // props might be missing if test errors out before they are set.
   if (state.db) {
-    await Promise.resolve(state.input.database.afterEach?.(state.db))
+    await Promise.resolve(state.input.database.afterEach?.(state.db, state.ctx))
       .catch((e) => errors.push(e))
       .then(() => state.prisma?.$disconnect())
       .catch((e) => errors.push(e))

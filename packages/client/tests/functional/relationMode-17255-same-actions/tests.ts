@@ -81,6 +81,8 @@ testMatrix.setupTestSuite(
               conditionalError.snapshot({
                 foreignKeys: {
                   [Providers.POSTGRESQL]: 'Foreign key constraint violated: `Main_aliceId_fkey (index)`',
+                  [Providers.KINGBASE_MYSQL]: 'Foreign key constraint violated: `Main_aliceId_fkey (index)`',
+                  [Providers.KINGBASE_ORACLE]: 'Foreign key constraint violated: `Main_aliceId_fkey (index)`',
                   [Providers.COCKROACHDB]: 'Foreign key constraint violated: `Main_aliceId_fkey (index)`',
                   [Providers.MYSQL]: 'Foreign key constraint violated: `aliceId`',
                   [Providers.SQLSERVER]: 'Foreign key constraint violated: `Main_aliceId_fkey (index)`',

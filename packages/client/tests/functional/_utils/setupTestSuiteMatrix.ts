@@ -12,6 +12,7 @@ import {
   getTestSuiteMeta,
 } from './getTestSuiteInfo'
 import { getTestSuitePlan } from './getTestSuitePlan'
+import { isKingbaseProvider } from './kingbase'
 import { setupTestSuiteClient, setupTestSuiteClientDriverAdapter } from './setupTestSuiteClient'
 import { DatasourceInfo, dropTestSuiteDatabase, setupTestSuiteDatabase, setupTestSuiteDbURI } from './setupTestSuiteEnv'
 import { stopMiniProxyQueryEngine } from './stopMiniProxyQueryEngine'
@@ -201,7 +202,11 @@ function setupTestSuiteMatrix(
         clients.length = 0
         // CI=false: Only drop the db if not skipped, and if the db does not need to be reused.
         // CI=true always skip to save time
-        if (options?.skipDb !== true && process.env.TEST_REUSE_DATABASE !== 'true' && process.env.CI !== 'true') {
+        if (
+          options?.skipDb !== true &&
+          (isKingbaseProvider(suiteConfig.matrixOptions.provider) ||
+            (process.env.TEST_REUSE_DATABASE !== 'true' && process.env.CI !== 'true'))
+        ) {
           const datasourceInfo = globalThis['datasourceInfo'] as DatasourceInfo
           process.env[datasourceInfo.envVarName] = datasourceInfo.databaseUrl
           process.env[datasourceInfo.directEnvVarName] = datasourceInfo.databaseUrl

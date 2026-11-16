@@ -14,7 +14,17 @@ export default defineMatrix(() => [
       randomString: 'bar',
     },
     {
+      provider: Providers.KINGBASE_ORACLE,
+      id: 'Int @id @default(autoincrement())',
+      randomString: 'bar',
+    },
+    {
       provider: Providers.MYSQL,
+      id: 'Int @id @default(autoincrement())',
+      randomString: 'baz',
+    },
+    {
+      provider: Providers.KINGBASE_MYSQL,
       id: 'Int @id @default(autoincrement())',
       randomString: 'baz',
     },

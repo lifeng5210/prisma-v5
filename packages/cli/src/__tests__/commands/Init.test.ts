@@ -1,4 +1,5 @@
 import { jestConsoleContext, jestContext } from '@prisma/get-platform'
+import { getConfig, validate } from '@prisma/internals'
 import fs from 'fs'
 import { join } from 'path'
 import stripAnsi from 'strip-ansi'
@@ -360,4 +361,29 @@ test('ignore .gitignore file if already present (do not override)', async () => 
   await ctx.cli('init')
   const gitignoreAfter = fs.readFileSync(gitignorePath, 'utf-8')
   expect(gitignoreAfter).toEqual(gitignoreBefore)
+})
+
+describe.each([
+  ['kingbase-mysql', 54321],
+  ['kingbase-oracle', 54325],
+] as const)('%s initialization', (provider, port) => {
+  test.each([false, true])('accepts the provider with uppercase=%s and creates a valid model', async (uppercase) => {
+    ctx.fixture('init')
+    const result = await ctx.cli(
+      'init',
+      '--datasource-provider',
+      uppercase ? provider.toUpperCase() : provider,
+      '--with-model',
+    )
+    const schema = ctx.fs.read('prisma/schema.prisma')!
+    const env = ctx.fs.read('.env')!
+
+    expect((await getConfig({ datamodel: schema, ignoreEnvVarErrors: true })).datasources[0].provider).toBe(provider)
+    expect(() => validate({ schemas: [['schema.prisma', schema]] })).not.toThrow()
+    expect(schema).toContain('@default(autoincrement())')
+    expect(schema).not.toContain('Accelerate')
+    expect(env).toContain(`DATABASE_URL="${provider}://johndoe:randompassword@localhost:${port}/mydb?schema=public"`)
+    expect(result.stdout).toContain('prisma generate')
+    expect(result.stdout).not.toContain('global caching')
+  })
 })

@@ -1,6 +1,9 @@
+import fs from 'node:fs'
 import path from 'node:path'
 
-import { BaseContext, jestConsoleContext, jestContext } from '@prisma/get-platform'
+import { enginesVersion } from '@prisma/engines'
+import { BinaryType, getBinaryName } from '@prisma/fetch-engine'
+import { BaseContext, getBinaryTargetForCurrentPlatform, jestConsoleContext, jestContext } from '@prisma/get-platform'
 import { ClientEngineType, getClientEngineType } from '@prisma/internals'
 
 import { Generate } from '../../Generate'
@@ -759,4 +762,47 @@ describe('with --sql', () => {
       `"Typed SQL is supported only for postgresql, cockroachdb, mysql, sqlite providers"`,
     )
   })
+})
+
+describe.each(['kingbase-mysql', 'kingbase-oracle'] as const)('%s native client generation', (provider) => {
+  test.each(['library', 'binary'] as const)(
+    'generates a %s client and copies the matching engine',
+    async (engineType) => {
+      ctx.fixture('init')
+      ctx.fs.write(
+        'prisma/schema.prisma',
+        `datasource db {
+  provider = "${provider}"
+  url = "${provider}://user:password@localhost:54321/app"
+}
+generator client {
+  provider = "prisma-client-js"
+  engineType = "${engineType}"
+  output = "../generated/client"
+}
+model CliRecord {
+  id Int @id
+  amount Decimal @db.Decimal(20, 2)
+}
+`,
+      )
+      const result = await ctx.cli('generate', '--schema', ctx.fs.path('prisma/schema.prisma'), '--no-hints')
+      expect(result.stdout).toContain('Generated Prisma Client')
+      const output = ctx.fs.path('generated/client')
+      const { Prisma, PrismaClient } = require(output)
+      expect(Prisma.prismaVersion.engine).toBe(enginesVersion)
+      const client = new PrismaClient()
+      try {
+        expect(client._engineConfig.activeProvider).toBe(provider)
+        expect(client._engineConfig.generator.config.engineType).toBe(engineType)
+        const target = await getBinaryTargetForCurrentPlatform()
+        const type = engineType === 'library' ? BinaryType.QueryEngineLibrary : BinaryType.QueryEngineBinary
+        expect(fs.existsSync(path.join(output, getBinaryName(type, target)))).toBe(true)
+        expect(fs.readFileSync(path.join(output, 'index.d.ts'), 'utf8')).toContain('CliRecord')
+      } finally {
+        await client.$disconnect()
+      }
+    },
+    60_000,
+  )
 })

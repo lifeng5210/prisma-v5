@@ -10,7 +10,6 @@ declare let prisma: PrismaClient
 testMatrix.setupTestSuite(
   () => {
     test('should work as createMany is supported', () => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       prisma.user.createMany()
 
       expectTypeOf(prisma.user).toHaveProperty('createMany')
@@ -25,7 +24,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: [Providers.POSTGRESQL, Providers.COCKROACHDB, Providers.SQLITE],
+      from: [Providers.POSTGRESQL, Providers.COCKROACHDB, Providers.SQLITE, 'kingbase-oracle'],
       reason:
         'Excluded dbs support the "ConnectorCapability::InsertReturning". This test is only about making sure that it does not show up where it is not supported.',
     },

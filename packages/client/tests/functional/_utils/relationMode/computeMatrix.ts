@@ -11,6 +11,8 @@ export function computeMatrix({ relationMode }: ComputeMatrix) {
     Providers.SQLSERVER,
     Providers.SQLITE,
     Providers.MYSQL,
+    Providers.KINGBASE_MYSQL,
+    Providers.KINGBASE_ORACLE,
   ] as const
 
   // Note: SetDefault is not implemented in the emulation (relationMode="prisma")
@@ -51,6 +53,7 @@ export function computeMatrix({ relationMode }: ComputeMatrix) {
     prisma: {
       [Providers.SQLSERVER]: ['Restrict'],
       [Providers.POSTGRESQL]: ['NoAction'],
+      [Providers.KINGBASE_ORACLE]: ['NoAction'],
       [Providers.SQLITE]: ['NoAction'],
     },
   }

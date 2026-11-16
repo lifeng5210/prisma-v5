@@ -1,4 +1,7 @@
+import path from 'node:path'
+
 import { loadRelatedSchemaFiles } from './loadRelatedSchemaFiles'
+import { InMemoryFilesResolver } from './resolver/InMemoryFilesResolver'
 import { fixturePath, loadedFile } from './testUtils'
 
 test('without feature enabled', async () => {
@@ -38,4 +41,31 @@ test('empty prisma schema should load', async () => {
   const files = await loadRelatedSchemaFiles(fixturePath('empty-schema', 'schema.prisma'))
 
   expect(files).toEqual([loadedFile('empty-schema', 'schema.prisma')])
+})
+
+test.each(['kingbase-mysql', 'kingbase-oracle'])('loads all related schema files for %s', async (provider) => {
+  const resolver = new InMemoryFilesResolver({ caseSensitive: true })
+  const configPath = path.resolve('virtual-kes-project', 'prisma', 'config.prisma')
+  const modelPath = path.resolve('virtual-kes-project', 'prisma', 'models', 'record.prisma')
+  const config = `datasource db {
+  provider = "${provider}"
+  url = "${provider}://user:password@localhost:54321/app"
+}
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["prismaSchemaFolder"]
+}
+`
+  const model = 'model Record {\n  id Int @id\n}\n'
+  resolver.addFile(configPath, config)
+  resolver.addFile(modelPath, model)
+
+  const files = await loadRelatedSchemaFiles(modelPath, resolver)
+  expect(files).toHaveLength(2)
+  expect(files).toEqual(
+    expect.arrayContaining([
+      [configPath, config],
+      [modelPath, model],
+    ]),
+  )
 })

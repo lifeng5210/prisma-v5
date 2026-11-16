@@ -7,10 +7,16 @@ export default defineMatrix(() => [
       provider: Providers.POSTGRESQL,
     },
     {
+      provider: Providers.KINGBASE_ORACLE,
+    },
+    {
       provider: Providers.COCKROACHDB,
     },
     {
       provider: Providers.MYSQL,
+    },
+    {
+      provider: Providers.KINGBASE_MYSQL,
     },
     {
       provider: Providers.SQLITE,

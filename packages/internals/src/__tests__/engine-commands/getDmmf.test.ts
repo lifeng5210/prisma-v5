@@ -584,3 +584,44 @@ describe('getDMMF', () => {
     })
   })
 })
+
+describe.each(['kingbase-mysql', 'kingbase-oracle'] as const)('%s DMMF', (provider) => {
+  test('exposes scalar fields, relations and model operations to generators', async () => {
+    const dmmf = await getDMMF({
+      datamodel: `datasource db {
+        provider = "${provider}"
+        url = "${provider}://localhost/app"
+      }
+      model Parent {
+        id Int @id @default(autoincrement())
+        children Child[]
+      }
+      model Child {
+        id Int @id @default(autoincrement())
+        amount Decimal @db.Decimal(10,2)
+        payload Json?
+        content Bytes?
+        createdAt DateTime @default(now())
+        parentId Int?
+        parent Parent? @relation(fields: [parentId], references: [id])
+      }`,
+    })
+
+    const child = dmmf.datamodel.models.find((model) => model.name === 'Child')!
+    expect(child.fields).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: 'amount', kind: 'scalar', type: 'Decimal' }),
+        expect.objectContaining({ name: 'payload', kind: 'scalar', type: 'Json' }),
+        expect.objectContaining({ name: 'content', kind: 'scalar', type: 'Bytes' }),
+        expect.objectContaining({ name: 'createdAt', kind: 'scalar', type: 'DateTime' }),
+        expect.objectContaining({ name: 'parent', kind: 'object', type: 'Parent', relationFromFields: ['parentId'] }),
+      ]),
+    )
+    expect(dmmf.mappings.modelOperations.find((model) => model.model === 'Child')).toMatchObject({
+      createOne: 'createOneChild',
+      findMany: 'findManyChild',
+      updateOne: 'updateOneChild',
+      deleteOne: 'deleteOneChild',
+    })
+  })
+})

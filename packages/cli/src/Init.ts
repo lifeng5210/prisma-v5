@@ -38,7 +38,9 @@ export const defaultSchema = (props?: {
   const aboutAccelerate = `\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n`
 
-  const isProviderCompatibleWithAccelerate = datasourceProvider !== 'sqlite'
+  const isProviderCompatibleWithAccelerate = !['sqlite', 'kingbase-mysql', 'kingbase-oracle'].includes(
+    datasourceProvider,
+  )
 
   let schema = `// This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
@@ -111,6 +113,10 @@ export const defaultPort = (datasourceProvider: ConnectorType) => {
   switch (datasourceProvider) {
     case 'mysql':
       return 3306
+    case 'kingbase-mysql':
+      return 54321
+    case 'kingbase-oracle':
+      return 54325
     case 'sqlserver':
       return 1433
     case 'mongodb':
@@ -136,6 +142,9 @@ export const defaultURL = (
       return `postgresql://johndoe:randompassword@localhost:${port}/mydb?schema=${schema}`
     case 'mysql':
       return `mysql://johndoe:randompassword@localhost:${port}/mydb`
+    case 'kingbase-mysql':
+    case 'kingbase-oracle':
+      return `${datasourceProvider}://johndoe:randompassword@localhost:${port}/mydb?schema=${schema}`
     case 'sqlserver':
       return `sqlserver://localhost:${port};database=mydb;user=SA;password=randompassword;`
     case 'mongodb':
@@ -175,7 +184,7 @@ export class Init implements Command {
   ${bold('Options')}
     
              -h, --help   Display this help message
-  --datasource-provider   Define the datasource provider to use: postgresql, mysql, sqlite, sqlserver, mongodb or cockroachdb
+  --datasource-provider   Define the datasource provider to use: postgresql, mysql, kingbase-mysql, kingbase-oracle, sqlite, sqlserver, mongodb or cockroachdb
    --generator-provider   Define the generator provider to use. Default: \`prisma-client-js\`
       --preview-feature   Define a preview feature to use.
                --output   Define Prisma Client generator output path to use.
@@ -276,12 +285,19 @@ export class Init implements Command {
         (input) => {
           const datasourceProviderLowercase = input['--datasource-provider'].toLowerCase()
           if (
-            !['postgresql', 'mysql', 'sqlserver', 'sqlite', 'mongodb', 'cockroachdb'].includes(
-              datasourceProviderLowercase,
-            )
+            ![
+              'postgresql',
+              'mysql',
+              'kingbase-mysql',
+              'kingbase-oracle',
+              'sqlserver',
+              'sqlite',
+              'mongodb',
+              'cockroachdb',
+            ].includes(datasourceProviderLowercase)
           ) {
             throw new Error(
-              `Provider "${args['--datasource-provider']}" is invalid or not supported. Try again with "postgresql", "mysql", "sqlite", "sqlserver", "mongodb" or "cockroachdb".`,
+              `Provider "${args['--datasource-provider']}" is invalid or not supported. Try again with "postgresql", "mysql", "kingbase-mysql", "kingbase-oracle", "sqlite", "sqlserver", "mongodb" or "cockroachdb".`,
             )
           }
           const datasourceProvider = datasourceProviderLowercase as ConnectorType
@@ -399,11 +415,13 @@ export class Init implements Command {
       )} to generate the Prisma Client. You can then start querying your database.`,
     )
 
-    steps.push(
-      `Tip: Explore how you can extend the ${green(
-        'ORM',
-      )} with scalable connection pooling, global caching, and real-time database events. Read: https://pris.ly/cli/beyond-orm`,
-    )
+    if (!['kingbase-mysql', 'kingbase-oracle'].includes(datasourceProvider)) {
+      steps.push(
+        `Tip: Explore how you can extend the ${green(
+          'ORM',
+        )} with scalable connection pooling, global caching, and real-time database events. Read: https://pris.ly/cli/beyond-orm`,
+      )
+    }
 
     if (!url || args['--datasource-provider']) {
       if (!args['--datasource-provider']) {

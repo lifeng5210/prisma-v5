@@ -1,1 +1,1 @@
-pnpm exec lint-staged
+npx --yes pnpm@8 exec lint-staged

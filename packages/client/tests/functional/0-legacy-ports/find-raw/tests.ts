@@ -112,7 +112,15 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: [Providers.SQLSERVER, Providers.MYSQL, Providers.POSTGRESQL, Providers.COCKROACHDB, Providers.SQLITE],
+      from: [
+        Providers.SQLSERVER,
+        Providers.MYSQL,
+        Providers.POSTGRESQL,
+        Providers.COCKROACHDB,
+        Providers.SQLITE,
+        'kingbase-mysql',
+        'kingbase-oracle',
+      ],
       reason: 'This is a MongoDB specific feature',
     },
   },

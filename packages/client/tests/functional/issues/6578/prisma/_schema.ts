@@ -3,11 +3,13 @@ import { Providers } from '../../../_utils/providers'
 import testMatrix from '../_matrix'
 
 export default testMatrix.setupSchema(({ provider }) => {
+  // Oracle DATE includes the time of day; it has no standalone TIME native type.
+  const timeNativeType = provider === Providers.KINGBASE_ORACLE ? 'Date' : 'Time'
   const compatibleTypes =
     provider !== Providers.SQLITE
       ? `
           date DateTime @db.Date 
-          time DateTime @db.Time
+          time DateTime @db.${timeNativeType}
         `
       : ''
 

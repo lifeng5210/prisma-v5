@@ -9,6 +9,9 @@ declare let prisma: PrismaClient
 testMatrix.setupTestSuite(
   ({ provider }, _suiteMeta, _clientMeta, cliMeta) => {
     const relationJoinsDisabled = !cliMeta.previewFeatures.includes('relationJoins')
+    const supportsSkipDuplicates = ![Providers.SQLSERVER, Providers.MONGODB, Providers.KINGBASE_ORACLE].includes(
+      provider,
+    )
 
     describeIf(relationJoinsDisabled)('relationLoadStrategy with no relationJoins preview feature', () => {
       test('findMany', async () => {
@@ -371,7 +374,7 @@ testMatrix.setupTestSuite(
         `)
       })
 
-      testIf(![Providers.SQLITE, Providers.SQLSERVER, Providers.MONGODB].includes(provider))('createMany', async () => {
+      testIf(provider !== Providers.SQLITE && supportsSkipDuplicates)('createMany', async () => {
         await expect(
           prisma.user.createMany({
             // @ts-expect-error
@@ -384,7 +387,7 @@ testMatrix.setupTestSuite(
           /client/tests/functional/relation-load-strategy-unsupported/preview-feature-disabled.ts:0:0
 
             XX 
-            XX testIf(![Providers.SQLITE, Providers.SQLSERVER, Providers.MONGODB].includes(provider))('createMany', async () => {
+            XX testIf(provider !== Providers.SQLITE && supportsSkipDuplicates)('createMany', async () => {
             XX   await expect(
           → XX     prisma.user.createMany({
                       relationLoadStrategy: "query",
@@ -401,8 +404,8 @@ testMatrix.setupTestSuite(
         `)
       })
 
-      testIf([Providers.SQLSERVER, Providers.MONGODB].includes(provider))(
-        'createMany (sqlserver, mongodb)',
+      testIf(!supportsSkipDuplicates)(
+        'createMany without skipDuplicates (sqlserver, mongodb, kingbase-oracle)',
         async () => {
           await expect(
             prisma.user.createMany({
@@ -415,7 +418,7 @@ testMatrix.setupTestSuite(
             Invalid \`prisma.user.createMany()\` invocation in
             /client/tests/functional/relation-load-strategy-unsupported/preview-feature-disabled.ts:0:0
 
-              XX 'createMany (sqlserver, mongodb)',
+              XX 'createMany without skipDuplicates (sqlserver, mongodb, kingbase-oracle)',
               XX async () => {
               XX   await expect(
             → XX     prisma.user.createMany({

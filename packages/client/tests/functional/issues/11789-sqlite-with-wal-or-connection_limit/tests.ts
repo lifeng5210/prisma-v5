@@ -194,7 +194,7 @@ testMatrix.setupTestSuite(
     skipDb: true,
     skipDefaultClientInstance: true,
     optOut: {
-      from: ['sqlserver', 'mongodb', 'postgresql', 'cockroachdb', 'mysql'],
+      from: ['sqlserver', 'mongodb', 'postgresql', 'cockroachdb', 'mysql', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'Test is made for SQLite only',
     },
   },

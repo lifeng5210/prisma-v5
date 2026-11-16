@@ -33,7 +33,7 @@ setupTestSuiteMatrix(
   },
   {
     optOut: {
-      from: ['mongodb', 'mysql', 'sqlite', 'sqlserver'],
+      from: ['mongodb', 'mysql', 'sqlite', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: `
         mongodb: connector does not support the Decimal type. 
         mysql & sqlite: connectors do not support lists of primitive types.

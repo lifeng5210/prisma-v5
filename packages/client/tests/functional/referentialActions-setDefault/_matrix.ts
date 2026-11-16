@@ -3,6 +3,8 @@ import { Providers } from '../_utils/providers'
 
 const driverAdapters = [
   Providers.POSTGRESQL,
+  Providers.KINGBASE_MYSQL,
+  Providers.KINGBASE_ORACLE,
   Providers.COCKROACHDB,
   Providers.SQLSERVER,
   Providers.SQLITE,

@@ -206,6 +206,10 @@ testMatrix.setupTestSuite(
                     foreignKeys: {
                       [Providers.POSTGRESQL]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
                       [Providers.COCKROACHDB]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `postId`',
@@ -368,6 +372,10 @@ testMatrix.setupTestSuite(
                     foreignKeys: {
                       [Providers.POSTGRESQL]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
                       [Providers.COCKROACHDB]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `postId`',
@@ -460,6 +468,10 @@ testMatrix.setupTestSuite(
                 : conditionalError.snapshot({
                     foreignKeys: {
                       [Providers.POSTGRESQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
                       [Providers.COCKROACHDB]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
@@ -657,6 +669,10 @@ testMatrix.setupTestSuite(
                     foreignKeys: {
                       [Providers.POSTGRESQL]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
                       [Providers.COCKROACHDB]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `postId`',
@@ -705,6 +721,10 @@ testMatrix.setupTestSuite(
                 : conditionalError.snapshot({
                     foreignKeys: {
                       [Providers.POSTGRESQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
                       [Providers.COCKROACHDB]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
@@ -909,6 +929,10 @@ testMatrix.setupTestSuite(
                       foreignKeys: {
                         [Providers.POSTGRESQL]:
                           'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                        [Providers.KINGBASE_MYSQL]:
+                          'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                        [Providers.KINGBASE_ORACLE]:
+                          'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
                         [Providers.COCKROACHDB]:
                           'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
                         [Providers.MYSQL]: 'Foreign key constraint violated: `postId`',
@@ -948,6 +972,10 @@ testMatrix.setupTestSuite(
                   : conditionalError.snapshot({
                       foreignKeys: {
                         [Providers.POSTGRESQL]:
+                          'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
+                        [Providers.KINGBASE_MYSQL]:
+                          'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
+                        [Providers.KINGBASE_ORACLE]:
                           'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
                         [Providers.COCKROACHDB]:
                           'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
@@ -995,6 +1023,10 @@ testMatrix.setupTestSuite(
                     foreignKeys: {
                       [Providers.POSTGRESQL]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_postId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `postId`',
                       [Providers.SQLITE]: 'Foreign key constraint violated: `foreign key`',
                       [AdapterProviders.JS_D1]: 'D1_ERROR: FOREIGN KEY constraint failed',
@@ -1034,6 +1066,10 @@ testMatrix.setupTestSuite(
                 : conditionalError.snapshot({
                     foreignKeys: {
                       [Providers.POSTGRESQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
                         'Foreign key constraint violated: `CategoriesOnPostsManyToMany_categoryId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `categoryId`',
                       [Providers.SQLITE]: 'Foreign key constraint violated: `foreign key`',

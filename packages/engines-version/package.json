@@ -1,0 +1,15 @@
+{
+  "name": "@prisma/engines-version",
+  "version": "0.0.0",
+  "description": "Engine revision metadata for the Prisma v5 Kingbase distribution",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "license": "Apache-2.0",
+  "prisma": {
+    "enginesVersion": "e5f010a4fd1082fa8ea1d90ac9158aee1c1bf0ab"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts"
+  ]
+}

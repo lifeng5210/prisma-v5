@@ -102,7 +102,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['sqlite', 'mysql', 'sqlserver'],
+      from: ['sqlite', 'mysql', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'Scalar lists are not supported',
     },
   },

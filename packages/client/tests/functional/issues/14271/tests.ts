@@ -139,6 +139,8 @@ testMatrix.setupTestSuite(
         Providers.POSTGRESQL,
         Providers.COCKROACHDB,
         Providers.SQLITE,
+        'kingbase-mysql',
+        'kingbase-oracle',
       ],
       reason: 'Only testing postgresql',
     },

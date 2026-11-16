@@ -1,5 +1,7 @@
+import { Decimal } from 'decimal.js'
 import { expectTypeOf } from 'expect-type'
 
+import { Providers } from '../../_utils/providers'
 import testMatrix from './_matrix'
 // @ts-ignore
 import type { Prisma as PrismaNamespace, PrismaClient } from './node_modules/@prisma/client'
@@ -15,8 +17,9 @@ const bigInt = BigInt('12345')
 const dateTime = new Date('2024-07-31T14:37:36.570Z')
 const date = new Date('2024-07-31T00:00:00.000Z')
 const time = new Date('1970-01-01T14:37:36.000Z')
+// KES query descriptions conservatively mark result columns as nullable.
 testMatrix.setupTestSuite(
-  ({ clientRuntime }) => {
+  ({ clientRuntime, provider }) => {
     beforeAll(async () => {
       await prisma.testModel.create({
         data: {
@@ -40,7 +43,13 @@ testMatrix.setupTestSuite(
     test('int - output', async () => {
       const result = await prisma.$queryRawTyped(sql.getInt(id))
       expect(result[0].int).toBe(123)
-      expectTypeOf(result[0].int).toBeNumber()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].int).toEqualTypeOf<number | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].int).toBeNumber()
+      }
     })
 
     test('int - input', async () => {
@@ -51,7 +60,13 @@ testMatrix.setupTestSuite(
     test('float - output', async () => {
       const result = await prisma.$queryRawTyped(sql.getFloat(id))
       expect(result[0].float).toBe(12.3)
-      expectTypeOf(result[0].float).toBeNumber()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].float).toEqualTypeOf<number | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].float).toBeNumber()
+      }
     })
 
     test('float - input', async () => {
@@ -62,7 +77,13 @@ testMatrix.setupTestSuite(
     test('double - output', async () => {
       const result = await prisma.$queryRawTyped(sql.getDouble(id))
       expect(result[0].double).toBe(12.3)
-      expectTypeOf(result[0].double).toBeNumber()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].double).toEqualTypeOf<number | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].double).toBeNumber()
+      }
     })
 
     test('double - input', async () => {
@@ -73,7 +94,13 @@ testMatrix.setupTestSuite(
     test('string - output', async () => {
       const result = await prisma.$queryRawTyped(sql.getString(id))
       expect(result[0].string).toEqual('hello')
-      expectTypeOf(result[0].string).toBeString()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].string).toEqualTypeOf<string | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].string).toBeString()
+      }
     })
 
     test('string - input', async () => {
@@ -84,7 +111,13 @@ testMatrix.setupTestSuite(
     test('BigInt - output', async () => {
       const result = await prisma.$queryRawTyped(sql.getBigInt(id))
       expect(result[0].bigInt).toEqual(bigInt)
-      expectTypeOf(result[0].bigInt).toEqualTypeOf<bigint>()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].bigInt).toEqualTypeOf<bigint | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].bigInt).toEqualTypeOf<bigint>()
+      }
     })
 
     test('BigInt - input', async () => {
@@ -98,7 +131,13 @@ testMatrix.setupTestSuite(
     test('DateTime - output', async () => {
       const result = await prisma.$queryRawTyped(sql.getDateTime(id))
       expect(result[0].dateTime).toEqual(dateTime)
-      expectTypeOf(result[0].dateTime).toEqualTypeOf<Date>()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].dateTime).toEqualTypeOf<Date | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].dateTime).toEqualTypeOf<Date>()
+      }
     })
 
     test('DateTime - input', async () => {
@@ -109,7 +148,13 @@ testMatrix.setupTestSuite(
     test('Date - output', async () => {
       const result = await prisma.$queryRawTyped(sql.getDate(id))
       expect(result[0].date).toEqual(date)
-      expectTypeOf(result[0].date).toEqualTypeOf<Date>()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].date).toEqualTypeOf<Date | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].date).toEqualTypeOf<Date>()
+      }
     })
 
     test('Date - input', async () => {
@@ -120,7 +165,13 @@ testMatrix.setupTestSuite(
     test('Time - output', async () => {
       const result = await prisma.$queryRawTyped(sql.getTime(id))
       expect(result[0].time).toEqual(time)
-      expectTypeOf(result[0].time).toEqualTypeOf<Date>()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].time).toEqualTypeOf<Date | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].time).toEqualTypeOf<Date>()
+      }
     })
 
     test('Time - input', async () => {
@@ -132,7 +183,13 @@ testMatrix.setupTestSuite(
       const result = await prisma.$queryRawTyped(sql.getDecimal(id))
       expect(result[0].decimal).toBeInstanceOf(Prisma.Decimal)
       expect(result[0].decimal).toEqual(new Prisma.Decimal('12.34'))
-      expectTypeOf(result[0].decimal).toEqualTypeOf<PrismaNamespace.Decimal>()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].decimal).toEqualTypeOf<Decimal | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].decimal).toEqualTypeOf<PrismaNamespace.Decimal>()
+      }
     })
 
     test('Decimal - input', async () => {
@@ -149,7 +206,13 @@ testMatrix.setupTestSuite(
         // edge/wasm runtimes polyfill Buffer and so this assertion does not work
         expect(result[0].bytes).toEqual(Buffer.from('hello'))
       }
-      expectTypeOf(result[0].bytes).toEqualTypeOf<Buffer>()
+      if (provider === Providers.KINGBASE_MYSQL) {
+        // @ts-test-if: provider === Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].bytes).toEqualTypeOf<Buffer | null>()
+      } else {
+        // @ts-test-if: provider !== Providers.KINGBASE_MYSQL
+        expectTypeOf(result[0].bytes).toEqualTypeOf<Buffer>()
+      }
     })
 
     test('bytes - input', async () => {
@@ -166,7 +229,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['sqlite', 'postgresql', 'mongodb', 'cockroachdb', 'sqlserver'],
+      from: ['sqlite', 'postgresql', 'mongodb', 'cockroachdb', 'sqlserver', 'kingbase-oracle'],
       reason: 'Focusing on mysql only',
     },
     skipDriverAdapter: {

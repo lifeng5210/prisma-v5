@@ -29,7 +29,15 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: [Providers.SQLSERVER, Providers.MYSQL, Providers.POSTGRESQL, Providers.COCKROACHDB, Providers.MONGODB],
+      from: [
+        Providers.SQLSERVER,
+        Providers.MYSQL,
+        Providers.POSTGRESQL,
+        Providers.COCKROACHDB,
+        Providers.MONGODB,
+        'kingbase-mysql',
+        'kingbase-oracle',
+      ],
       reason: `
         This test is fairly slow and the issue it is testing is not provider-dependent.
         Just for the sake of keeping test times acceptable, we are testing it only on sqlite

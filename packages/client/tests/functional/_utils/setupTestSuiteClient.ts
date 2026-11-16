@@ -16,6 +16,7 @@ import {
   getTestSuiteSchemaPath,
   testSuiteHasTypedSql,
 } from './getTestSuiteInfo'
+import { scopeKingbaseSchema } from './kingbase'
 import { AdapterProviders } from './providers'
 import { DatasourceInfo, setupTestSuiteDatabase, setupTestSuiteFiles, setupTestSuiteSchema } from './setupTestSuiteEnv'
 import type { TestSuiteMeta } from './setupTestSuiteMatrix'
@@ -50,7 +51,11 @@ export async function setupTestSuiteClient({
 }) {
   const suiteFolderPath = getTestSuiteFolderPath({ suiteMeta, suiteConfig })
   const schemaPath = getTestSuiteSchemaPath({ suiteMeta, suiteConfig })
-  const schema = getTestSuiteSchema({ cliMeta, suiteMeta, matrixOptions: suiteConfig.matrixOptions })
+  const schema = scopeKingbaseSchema(
+    getTestSuiteSchema({ cliMeta, suiteMeta, matrixOptions: suiteConfig.matrixOptions }),
+    datasourceInfo.databaseUrl,
+    suiteConfig.matrixOptions.provider,
+  )
   const previewFeatures = getTestSuitePreviewFeatures(schema)
   const dmmf = await getDMMF({ datamodel: [[schemaPath, schema]], previewFeatures })
   const config = await getConfig({ datamodel: [[schemaPath, schema]], ignoreEnvVarErrors: true })

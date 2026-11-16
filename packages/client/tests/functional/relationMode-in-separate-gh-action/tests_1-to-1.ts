@@ -119,6 +119,10 @@ testMatrix.setupTestSuite(
                 : conditionalError.snapshot({
                     foreignKeys: {
                       [Providers.POSTGRESQL]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
+                        'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                       [Providers.COCKROACHDB]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `userId`',
                       [Providers.SQLSERVER]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
@@ -503,6 +507,10 @@ testMatrix.setupTestSuite(
                 : conditionalError.snapshot({
                     foreignKeys: {
                       [Providers.POSTGRESQL]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
+                        'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                       [Providers.COCKROACHDB]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `userId`',
                       [Providers.SQLSERVER]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
@@ -579,6 +587,8 @@ testMatrix.setupTestSuite(
                     // see _utils/relationMode/computeMatrix.ts
                     foreignKeys: {
                       [Providers.POSTGRESQL]: 'Unique constraint failed on the fields: (`id`)',
+                      [Providers.KINGBASE_MYSQL]: 'Unique constraint failed on the constraint: `UserOneToOne_pkey`',
+                      [Providers.KINGBASE_ORACLE]: 'Unique constraint failed on the constraint: `UserOneToOne_pkey`',
                       [Providers.COCKROACHDB]: 'Unique constraint failed on the fields: (`id`)',
                       [Providers.MYSQL]: ['Restrict', 'NoAction'].includes(onUpdate)
                         ? // Restrict / NoAction
@@ -603,6 +613,10 @@ testMatrix.setupTestSuite(
                       : // DEFAULT / SetNull
                         {
                           [Providers.POSTGRESQL]: 'Unique constraint failed on the fields: (`userId`)',
+                          [Providers.KINGBASE_MYSQL]:
+                            'Unique constraint failed on the constraint: `ProfileOneToOne_userId_key`',
+                          [Providers.KINGBASE_ORACLE]:
+                            'Unique constraint failed on the constraint: `ProfileOneToOne_userId_key`',
                           [Providers.COCKROACHDB]: 'Unique constraint failed on the fields: (`userId`)',
                           [Providers.MYSQL]: 'Unique constraint failed on the constraint: `ProfileOneToOne_userId_key`',
                           [Providers.SQLSERVER]: 'Unique constraint failed on the constraint: `dbo.ProfileOneToOne`',
@@ -677,6 +691,10 @@ testMatrix.setupTestSuite(
                     : conditionalError.snapshot({
                         foreignKeys: {
                           [Providers.POSTGRESQL]: 'Unique constraint failed on the fields: (`id`)',
+                          [Providers.KINGBASE_MYSQL]:
+                            'Unique constraint failed on the constraint: `ProfileOneToOne_pkey`',
+                          [Providers.KINGBASE_ORACLE]:
+                            'Unique constraint failed on the constraint: `ProfileOneToOne_pkey`',
                           [Providers.COCKROACHDB]: 'Unique constraint failed on the fields: (`id`)',
                           [Providers.MYSQL]: 'Unique constraint failed on the constraint: `PRIMARY`',
                           [Providers.SQLSERVER]: 'Unique constraint failed on the constraint: `dbo.ProfileOneToOne`',
@@ -684,6 +702,10 @@ testMatrix.setupTestSuite(
                         },
                         prisma: {
                           [Providers.POSTGRESQL]: 'Unique constraint failed on the fields: (`id`)',
+                          [Providers.KINGBASE_MYSQL]:
+                            'Unique constraint failed on the constraint: `ProfileOneToOne_pkey`',
+                          [Providers.KINGBASE_ORACLE]:
+                            'Unique constraint failed on the constraint: `ProfileOneToOne_pkey`',
                           [Providers.COCKROACHDB]: 'Unique constraint failed on the fields: (`id`)',
                           [Providers.MYSQL]: 'Unique constraint failed on the constraint: `PRIMARY`',
                           [Providers.SQLSERVER]: 'Unique constraint failed on the constraint: `dbo.ProfileOneToOne`',
@@ -875,6 +897,10 @@ testMatrix.setupTestSuite(
                       [Providers.MONGODB]:
                         "The change you are trying to make would violate the required relation 'ProfileOneToOneToUserOneToOne' between the `ProfileOneToOne` and `UserOneToOne` models.",
                       [Providers.POSTGRESQL]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                      [Providers.KINGBASE_MYSQL]:
+                        'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                      [Providers.KINGBASE_ORACLE]:
+                        'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                       [Providers.COCKROACHDB]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                       [Providers.MYSQL]: 'Foreign key constraint violated: `userId`',
                       [Providers.SQLSERVER]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
@@ -939,6 +965,10 @@ testMatrix.setupTestSuite(
               : conditionalError.snapshot({
                   foreignKeys: {
                     [Providers.POSTGRESQL]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                    [Providers.KINGBASE_MYSQL]:
+                      'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                    [Providers.KINGBASE_ORACLE]:
+                      'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                     [Providers.COCKROACHDB]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                     [Providers.MYSQL]: 'Foreign key constraint violated: `userId`',
                     [Providers.SQLSERVER]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',

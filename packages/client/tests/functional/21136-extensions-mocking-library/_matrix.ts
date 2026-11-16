@@ -6,5 +6,11 @@ export default defineMatrix(() => [
     {
       provider: Providers.SQLITE,
     },
+    {
+      provider: Providers.KINGBASE_ORACLE,
+    },
+    {
+      provider: Providers.KINGBASE_MYSQL,
+    },
   ],
 ])

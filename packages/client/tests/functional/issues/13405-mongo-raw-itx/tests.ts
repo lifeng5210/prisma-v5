@@ -123,7 +123,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['sqlite', 'mysql', 'postgresql', 'sqlserver', 'cockroachdb'],
+      from: ['sqlite', 'mysql', 'postgresql', 'sqlserver', 'cockroachdb', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'findRaw, runCommandRaw and aggregateRaw are MongoDB-only APIs',
     },
   },

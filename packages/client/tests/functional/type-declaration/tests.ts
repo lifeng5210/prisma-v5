@@ -21,7 +21,15 @@ testMatrix.setupTestSuite(
     skipDb: true,
     skipDefaultClientInstance: true,
     optOut: {
-      from: [Providers.SQLSERVER, Providers.MYSQL, Providers.POSTGRESQL, Providers.COCKROACHDB, Providers.MONGODB],
+      from: [
+        Providers.SQLSERVER,
+        Providers.MYSQL,
+        Providers.POSTGRESQL,
+        Providers.COCKROACHDB,
+        Providers.MONGODB,
+        'kingbase-mysql',
+        'kingbase-oracle',
+      ],
       reason: 'Test checks runtime file that is statically build and does not depend on  provider',
     },
   },

@@ -126,7 +126,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['sqlite', 'mongodb', 'mysql', 'cockroachdb'],
+      from: ['sqlite', 'mongodb', 'mysql', 'cockroachdb', 'kingbase-mysql'],
       reason: 'Multi Schema only working for postgresql and sqlserver',
     },
   },

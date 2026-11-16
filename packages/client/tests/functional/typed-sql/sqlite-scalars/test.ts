@@ -119,7 +119,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['postgresql', 'mongodb', 'cockroachdb', 'sqlserver', 'mysql'],
+      from: ['postgresql', 'mongodb', 'cockroachdb', 'sqlserver', 'mysql', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'Focusing on sqlite only',
     },
     skipDriverAdapter: {

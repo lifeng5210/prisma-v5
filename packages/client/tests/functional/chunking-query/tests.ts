@@ -45,7 +45,7 @@ testMatrix.setupTestSuite(
 
       async function getTagsParams(ids: number[]): Promise<Tag[]> {
         const idsParams = ids.map((paramIdx) => {
-          const param = ['mysql'].includes(provider) ? '?' : `\$${paramIdx}`
+          const param = ['mysql', 'kingbase-mysql'].includes(provider) ? '?' : `\$${paramIdx}`
           return param
         })
 
@@ -106,6 +106,17 @@ testMatrix.setupTestSuite(
 
         expect(tags.length).toBe(EXCESS_BIND_VALUES)
       })
+
+      testIf(provider === Providers.KINGBASE_ORACLE).each([32767, 32768])(
+        'reserves the default OFFSET parameter when querying %i IDs',
+        async (count) => {
+          const ids = await createTags(count)
+          const tags = await getTagsFindManyIn(ids)
+          expect(tags.length).toBe(count)
+          const includedTags = await getTagsFindManyInclude()
+          expect(includedTags.length).toBe(count)
+        },
+      )
 
       // Chunking mechanism looks flawed with pagination.
       // See https://github.com/prisma/prisma/issues/23733 for more info

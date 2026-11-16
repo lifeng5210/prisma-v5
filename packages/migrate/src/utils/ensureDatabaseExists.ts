@@ -14,7 +14,15 @@ import { ConnectorType } from './printDatasources'
 import { getSocketFromDatabaseCredentials } from './unixSocket'
 
 export type MigrateAction = 'create' | 'apply' | 'unapply' | 'dev' | 'push'
-export type PrettyProvider = 'MySQL' | 'PostgreSQL' | 'SQLite' | 'SQL Server' | 'CockroachDB' | 'MongoDB'
+export type PrettyProvider =
+  | 'MySQL'
+  | 'Kingbase MySQL'
+  | 'Kingbase Oracle'
+  | 'PostgreSQL'
+  | 'SQLite'
+  | 'SQL Server'
+  | 'CockroachDB'
+  | 'MongoDB'
 
 // TODO: extract functions in their own files?
 
@@ -94,6 +102,8 @@ export async function getDatasourceInfo({
       } else {
         schema = 'public'
       }
+    } else if (['kingbase-mysql', 'kingbase-oracle'].includes(firstDatasource.provider)) {
+      schema = credentials.schema
     }
 
     const datasourceInfo = {
@@ -238,6 +248,10 @@ export function prettifyProvider(provider: ConnectorType): PrettyProvider {
   switch (provider) {
     case 'mysql':
       return `MySQL`
+    case 'kingbase-mysql':
+      return `Kingbase MySQL`
+    case 'kingbase-oracle':
+      return `Kingbase Oracle`
     case 'postgres':
     case 'postgresql':
       return `PostgreSQL`

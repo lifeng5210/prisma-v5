@@ -1,4 +1,4 @@
-import { credentialsToUri, uriToCredentials } from '../convertCredentials'
+import { credentialsToUri, protocolToConnectorType, uriToCredentials } from '../convertCredentials'
 
 const uris = [
   'file:',
@@ -52,3 +52,45 @@ for (const uri of notIdenticalUris) {
     expect(uriFromCredentials).toMatchSnapshot()
   })
 }
+
+describe.each(['kingbase-mysql', 'kingbase-oracle'] as const)('%s credentials', (provider) => {
+  test('preserves the provider, database, schema and connection options', () => {
+    const uri = `${provider}://user:password@localhost:54321/mydb?schema=tenant&connect_timeout=10&application_name=myapp`
+    const credentials = uriToCredentials(uri)
+
+    expect(credentials).toMatchObject({
+      type: provider,
+      host: 'localhost',
+      port: 54321,
+      user: 'user',
+      password: 'password',
+      database: 'mydb',
+      schema: 'tenant',
+      extraFields: { connect_timeout: '10', application_name: 'myapp' },
+    })
+    expect(protocolToConnectorType(`${provider}:`)).toBe(provider)
+    expect(credentialsToUri(credentials)).toBe(uri)
+  })
+
+  test.each([
+    'localhost',
+    'localhost/mydb',
+    'user:p%40ss%3Aword@localhost:54321/mydb',
+    'user@localhost/mydb?schema=tenant&socket=%2Ftmp%2Fkes.sock',
+    'user@localhost/mydb?schema=tenant&sslmode=require',
+    'user@localhost/mydb?host=%2Fvar%2Frun%2Fkingbase',
+  ])('round-trips %s', (suffix) => {
+    const uri = `${provider}://${suffix}`
+    expect(credentialsToUri(uriToCredentials(uri))).toBe(uri)
+  })
+})
+
+test('normalizes the Kingbase MySQL URL alias without losing connection options', () => {
+  const suffix = 'user:password@localhost:54321/mydb?schema=tenant&connect_timeout=10'
+  const canonical = uriToCredentials(`kingbase-mysql://${suffix}`)
+  const alias = uriToCredentials(`kingbase://${suffix}`)
+
+  expect(alias).toEqual({ ...canonical, uri: `kingbase://${suffix}` })
+  expect(protocolToConnectorType('kingbase:')).toBe('kingbase-mysql')
+  expect(credentialsToUri(alias)).toBe(`kingbase-mysql://${suffix}`)
+})

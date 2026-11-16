@@ -149,6 +149,8 @@ testMatrix.setupTestSuite(
             conditionalError.snapshot({
               foreignKeys: {
                 [Providers.POSTGRESQL]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                [Providers.KINGBASE_MYSQL]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                [Providers.KINGBASE_ORACLE]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                 [Providers.COCKROACHDB]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                 [Providers.MYSQL]: 'Foreign key constraint violated: `userId`',
                 [Providers.SQLSERVER]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
@@ -225,6 +227,8 @@ testMatrix.setupTestSuite(
             conditionalError.snapshot({
               foreignKeys: {
                 [Providers.POSTGRESQL]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                [Providers.KINGBASE_MYSQL]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
+                [Providers.KINGBASE_ORACLE]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                 [Providers.COCKROACHDB]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',
                 [Providers.MYSQL]: 'Foreign key constraint violated: `userId`',
                 [Providers.SQLSERVER]: 'Foreign key constraint violated: `ProfileOneToOne_userId_fkey (index)`',

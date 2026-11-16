@@ -22,7 +22,7 @@ testMatrix.setupTestSuite(
   },
   {
     optOut: {
-      from: ['sqlite', 'mysql', 'mongodb', 'cockroachdb', 'sqlserver'],
+      from: ['sqlite', 'mysql', 'mongodb', 'cockroachdb', 'sqlserver', 'kingbase-mysql', 'kingbase-oracle'],
       reason: 'This does not depend on a particular provider',
     },
     skipDefaultClientInstance: true,

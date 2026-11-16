@@ -130,6 +130,13 @@ function shouldSkipSuiteConfig(
     return true
   }
 
+  if (
+    (provider === Providers.KINGBASE_MYSQL || provider === Providers.KINGBASE_ORACLE) &&
+    (cliMeta.dataProxy || cliMeta.runtime !== 'node')
+  ) {
+    return true
+  }
+
   // if the client doesn't support the provider, skip
   if (cliMeta.dataProxy && provider === Providers.SQLITE) {
     return true
@@ -194,6 +201,8 @@ const excludeEnvToProviderMap = {
   TEST_SKIP_COCKROACHDB: 'cockroachdb',
   TEST_SKIP_POSTGRESQL: 'postgresql',
   TEST_SKIP_SQLITE: 'sqlite',
+  TEST_SKIP_KINGBASE_MYSQL: 'kingbase-mysql',
+  TEST_SKIP_KINGBASE_ORACLE: 'kingbase-oracle',
 }
 
 const excludeEnvToProviderFlavorMap = {

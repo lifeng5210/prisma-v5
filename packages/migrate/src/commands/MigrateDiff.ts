@@ -5,6 +5,7 @@ import {
   Command,
   format,
   getConfig,
+  getSchemaWithPath,
   HelpError,
   isError,
   link,
@@ -17,7 +18,6 @@ import fs from 'fs-jetpack'
 import { bold, dim, green, italic } from 'kleur/colors'
 import path from 'path'
 
-import { getSchemaWithPath } from '../../../internals/src/cli/getSchema'
 import { Migrate } from '../Migrate'
 import type { EngineArgs, EngineResults } from '../types'
 import { CaptureStdout } from '../utils/captureStdout'

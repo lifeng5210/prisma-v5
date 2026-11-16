@@ -51,6 +51,8 @@ testMatrix.setupTestSuite(
       `
       const results = {
         postgresql: [{ '?column?': 1 }],
+        'kingbase-mysql': [{ '?column?': 1 }],
+        'kingbase-oracle': [{ '?column?': 1 }],
         cockroachdb: [{ '?column?': BigInt('1') }],
         mysql: [{ '1': BigInt('1') }],
         sqlite: [{ '1': isD1DriverAdapter ? 1 : BigInt('1') }],
@@ -75,6 +77,8 @@ testMatrix.setupTestSuite(
 
       const results = {
         postgresql: [{ number: 1 }],
+        'kingbase-mysql': [{ number: 1 }],
+        'kingbase-oracle': [{ number: 1 }],
         cockroachdb: [{ number: BigInt('1') }],
         mysql: [{ number: BigInt('1') }],
         sqlite: [{ number: isD1DriverAdapter ? 1 : BigInt('1') }],
@@ -91,6 +95,8 @@ testMatrix.setupTestSuite(
 
       const results = {
         postgresql: [{ number: 1 }],
+        'kingbase-mysql': [{ number: 1 }],
+        'kingbase-oracle': [{ number: 1 }],
         cockroachdb: [{ number: BigInt('1') }],
         mysql: [{ number: BigInt('1') }],
         sqlite: [{ number: isD1DriverAdapter ? 1 : BigInt('1') }],
@@ -108,6 +114,8 @@ testMatrix.setupTestSuite(
 
       const results = {
         postgresql: [{ '?column?': 1 }],
+        'kingbase-mysql': [{ '?column?': 1 }],
+        'kingbase-oracle': [{ '?column?': 1 }],
         cockroachdb: [{ '?column?': BigInt('1') }],
         mysql: [{ '1': BigInt('1') }],
         sqlite: [{ '1': isD1DriverAdapter ? 1 : BigInt('1') }],
@@ -139,7 +147,23 @@ testMatrix.setupTestSuite(
 
       result.sort((a, b) => a.id.localeCompare(b.id))
 
-      expect(result).toMatchInlineSnapshot(`
+      if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result).toStrictEqual([
+          {
+            age: new Prisma.Decimal('60'),
+            email: 'Kyla_Beer587@fraternise-assassination.name',
+            id: 'a7fe5dac91ab6b0f529430c5',
+            name: null,
+          },
+          {
+            age: new Prisma.Decimal('45'),
+            email: 'Sam.Mills50272@oozeastronomy.net',
+            id: 'a85d5d75a3a886cb61eb3a0e',
+            name: null,
+          },
+        ])
+      } else {
+        expect(result).toMatchInlineSnapshot(`
         [
           {
             "age": 60,
@@ -155,6 +179,7 @@ testMatrix.setupTestSuite(
           },
         ]
       `)
+      }
     })
 
     test('select * via queryRawUnsafe with values', async () => {
@@ -169,7 +194,23 @@ testMatrix.setupTestSuite(
 
       result.sort((a, b) => a.id.localeCompare(b.id))
 
-      expect(result).toMatchInlineSnapshot(`
+      if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result).toStrictEqual([
+          {
+            age: new Prisma.Decimal('60'),
+            email: 'Kyla_Beer587@fraternise-assassination.name',
+            id: 'a7fe5dac91ab6b0f529430c5',
+            name: null,
+          },
+          {
+            age: new Prisma.Decimal('45'),
+            email: 'Sam.Mills50272@oozeastronomy.net',
+            id: 'a85d5d75a3a886cb61eb3a0e',
+            name: null,
+          },
+        ])
+      } else {
+        expect(result).toMatchInlineSnapshot(`
         [
           {
             "age": 60,
@@ -185,6 +226,7 @@ testMatrix.setupTestSuite(
           },
         ]
       `)
+      }
     })
 
     test('select * via queryRaw', async () => {
@@ -201,7 +243,23 @@ testMatrix.setupTestSuite(
 
       result.sort((a, b) => a.id.localeCompare(b.id))
 
-      expect(result).toMatchInlineSnapshot(`
+      if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result).toStrictEqual([
+          {
+            age: new Prisma.Decimal('60'),
+            email: 'Kyla_Beer587@fraternise-assassination.name',
+            id: 'a7fe5dac91ab6b0f529430c5',
+            name: null,
+          },
+          {
+            age: new Prisma.Decimal('45'),
+            email: 'Sam.Mills50272@oozeastronomy.net',
+            id: 'a85d5d75a3a886cb61eb3a0e',
+            name: null,
+          },
+        ])
+      } else {
+        expect(result).toMatchInlineSnapshot(`
         [
           {
             "age": 60,
@@ -217,6 +275,7 @@ testMatrix.setupTestSuite(
           },
         ]
       `)
+      }
     })
 
     test('select fields via queryRaw using Prisma.join', async () => {
@@ -242,7 +301,21 @@ testMatrix.setupTestSuite(
 
       result.sort((a, b) => a.id.localeCompare(b.id))
 
-      expect(result).toMatchInlineSnapshot(`
+      if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result).toStrictEqual([
+          {
+            age: new Prisma.Decimal('60'),
+            email: 'Kyla_Beer587@fraternise-assassination.name',
+            id: 'a7fe5dac91ab6b0f529430c5',
+          },
+          {
+            age: new Prisma.Decimal('45'),
+            email: 'Sam.Mills50272@oozeastronomy.net',
+            id: 'a85d5d75a3a886cb61eb3a0e',
+          },
+        ])
+      } else {
+        expect(result).toMatchInlineSnapshot(`
         [
           {
             "age": 60,
@@ -256,6 +329,7 @@ testMatrix.setupTestSuite(
           },
         ]
       `)
+      }
     })
 
     test('select fields via queryRaw using Prisma.join and Prisma.sql', async () => {
@@ -281,7 +355,21 @@ testMatrix.setupTestSuite(
 
       result.sort((a, b) => a.id.localeCompare(b.id))
 
-      expect(result).toMatchInlineSnapshot(`
+      if (provider === Providers.KINGBASE_ORACLE) {
+        expect(result).toStrictEqual([
+          {
+            age: new Prisma.Decimal('60'),
+            email: 'Kyla_Beer587@fraternise-assassination.name',
+            id: 'a7fe5dac91ab6b0f529430c5',
+          },
+          {
+            age: new Prisma.Decimal('45'),
+            email: 'Sam.Mills50272@oozeastronomy.net',
+            id: 'a85d5d75a3a886cb61eb3a0e',
+          },
+        ])
+      } else {
+        expect(result).toMatchInlineSnapshot(`
         [
           {
             "age": 60,
@@ -295,6 +383,7 @@ testMatrix.setupTestSuite(
           },
         ]
       `)
+      }
     })
   },
   {

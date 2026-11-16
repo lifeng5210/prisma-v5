@@ -31,6 +31,8 @@ testMatrix.setupTestSuite(
             expect((result as Error).message).toContain('Raw query failed. Code: `21`. Message: `not an error`')
           }
           break
+        case Providers.KINGBASE_MYSQL:
+        case Providers.KINGBASE_ORACLE:
         case Providers.POSTGRESQL:
         case Providers.COCKROACHDB:
         case Providers.SQLSERVER:
@@ -68,6 +70,8 @@ testMatrix.setupTestSuite(
             expect((result as Error).message).toContain('Raw query failed. Code: `21`. Message: `not an error`')
           }
           break
+        case Providers.KINGBASE_MYSQL:
+        case Providers.KINGBASE_ORACLE:
         case Providers.POSTGRESQL:
         case Providers.COCKROACHDB:
         case Providers.SQLSERVER:
